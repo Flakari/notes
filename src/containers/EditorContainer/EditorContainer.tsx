@@ -1,30 +1,52 @@
 import { SyntheticEvent, useEffect, useRef, useState } from 'react';
-import { convertToRaw, Editor, EditorState, RichUtils } from 'draft-js';
+import { convertToRaw, convertFromRaw, Editor, EditorState, RichUtils } from 'draft-js';
 
 import classes from './EditorContainer.module.css';
 
-const styles = [
+const inlineStyles = [
     { icon: 'B', type: 'BOLD', class: classes.BoldButton },
     { icon: 'I', type: 'ITALIC', class: classes.ItalicButton },
     { icon: 'U', type: 'UNDERLINE', class: classes.UnderlineButton }
 ];
 
 export const EditorContainer = () => {
-    const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
+    const content = localStorage.getItem('content');
+    const [editorState, setEditorState] = useState(content ? () => EditorState.createWithContent(convertFromRaw(JSON.parse(content))) : () => EditorState.createEmpty());
     const contentState = editorState.getCurrentContent();
-    const editorRef = useRef<Editor>(null);
+    const editorContainerRef = useRef<HTMLDivElement>(null);
+    const [appStart, setAppStart] = useState(true);
+    const [savingStr, setSavingStr] = useState(false);
 
-    // Debounce mock save feature
+    // Debounce save feature
     useEffect(() => {
+        setSavingStr(false);
         let timer = setTimeout(() => {
-            console.log(contentState.getPlainText());
             const rawContent = convertToRaw(contentState);
-            console.log(rawContent);
+            localStorage.setItem('content', JSON.stringify(rawContent));
+            if (!appStart) {
+                setSavingStr(true);
+            }
         }, 2000);
         return () => {
             clearTimeout(timer);
         }
-    }, [contentState]);
+    }, [contentState, appStart]);
+
+    // Prevents save message from appearing when component is first loaded
+    useEffect(() => {
+        editorContainerRef.current?.addEventListener('keydown', () => {
+            setAppStart(false);
+        });
+    }, []);
+
+    // Removes save message a few seconds after saving
+    useEffect(() => {
+        if (savingStr === true) {
+            setTimeout(() => {
+                setSavingStr(false);
+            }, 2500);
+        }
+    }, [savingStr]);
 
     // Basic function to handle key commands
     const handleKeyCommand = (command: string) => {
@@ -46,21 +68,23 @@ export const EditorContainer = () => {
 
     return (
         <div>
-            {styles.map(style => (
+            {inlineStyles.map(style => (
                 <button
                     key={style.type}
                     className={[classes.InlineButton, style.class].join(' ')}
                     onMouseDown={(e) => onInlineStyleClick(e, style.type)}
                 >{style.icon}</button>
             ))}
-            <div className={classes.EditorContainer}>
+            <div ref={editorContainerRef} className={classes.EditorContainer}>
                 <Editor
-                    ref={editorRef}
                     handleKeyCommand={handleKeyCommand}
                     editorState={editorState}
                     onChange={setEditorState}
                 />
             </div>
+            {savingStr ? <p>Saved!</p> : null}
         </div>
     );
 };
+
+export default EditorContainer;

@@ -1,6 +1,6 @@
 import './App.css';
-import { Header } from './components/Header/Header';
-import { EditorContainer } from './containers/EditorContainer/EditorContainer';
+import Header from './components/Header/Header';
+import EditorContainer from './containers/EditorContainer/EditorContainer';
 
 function App() {
 	return (

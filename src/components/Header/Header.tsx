@@ -3,3 +3,5 @@ export const Header = () => (
         <p>Notes</p>
     </header>
 );
+
+export default Header;
