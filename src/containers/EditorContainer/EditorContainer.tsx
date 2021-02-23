@@ -14,6 +14,7 @@ export const EditorContainer = () => {
     const [editorState, setEditorState] = useState(content ? () => EditorState.createWithContent(convertFromRaw(JSON.parse(content))) : () => EditorState.createEmpty());
     const contentState = editorState.getCurrentContent();
     const editorContainerRef = useRef<HTMLDivElement>(null);
+    // Flags if container component has just been loaded, only changes to false when editor gets used
     const [appStart, setAppStart] = useState(true);
     const [savingStr, setSavingStr] = useState(false);
 
@@ -32,7 +33,7 @@ export const EditorContainer = () => {
         }
     }, [contentState, appStart]);
 
-    // Prevents save message from appearing when component is first loaded
+    // Allows save message to appear after a key has been pressed in the editing container
     useEffect(() => {
         editorContainerRef.current?.addEventListener('keydown', () => {
             setAppStart(false);
@@ -64,6 +65,9 @@ export const EditorContainer = () => {
     const onInlineStyleClick = (e: SyntheticEvent, command: string) => {
         e.preventDefault();
         setEditorState(RichUtils.toggleInlineStyle(editorState, command));
+        if (appStart) {
+            setAppStart(false);
+        }
     };
 
     return (
