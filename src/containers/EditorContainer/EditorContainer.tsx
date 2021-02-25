@@ -2,6 +2,8 @@ import { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { convertToRaw, convertFromRaw, Editor, EditorState, RichUtils } from 'draft-js';
 
 import classes from './EditorContainer.module.css';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 
 const inlineStyles = [
     { icon: 'B', type: 'BOLD', class: classes.BoldButton },
@@ -9,9 +11,14 @@ const inlineStyles = [
     { icon: 'U', type: 'UNDERLINE', class: classes.UnderlineButton }
 ];
 
-export const EditorContainer = () => {
-    const content = localStorage.getItem('content');
-    const [editorState, setEditorState] = useState(content ? () => EditorState.createWithContent(convertFromRaw(JSON.parse(content))) : () => EditorState.createEmpty());
+interface PropTypes {
+    id: string;
+    saveNote: (id: string, content: string) => {};
+    content: string;
+}
+
+export const EditorContainer = (props: PropTypes) => {
+    const [editorState, setEditorState] = useState(props.content ? () => EditorState.createWithContent(convertFromRaw(JSON.parse(props.content))) : () => EditorState.createEmpty());
     const contentState = editorState.getCurrentContent();
     const editorContainerRef = useRef<HTMLDivElement>(null);
     // Flags if container component has just been loaded, only changes to false when editor gets used
@@ -22,8 +29,7 @@ export const EditorContainer = () => {
     useEffect(() => {
         setSavingStr(false);
         let timer = setTimeout(() => {
-            const rawContent = convertToRaw(contentState);
-            localStorage.setItem('content', JSON.stringify(rawContent));
+            props.saveNote(props.id, JSON.stringify(convertToRaw(contentState)));
             if (!appStart) {
                 setSavingStr(true);
             }
@@ -31,7 +37,7 @@ export const EditorContainer = () => {
         return () => {
             clearTimeout(timer);
         }
-    }, [contentState, appStart]);
+    }, [contentState, appStart, props]);
 
     // Allows save message to appear after a key has been pressed in the editing container
     useEffect(() => {
@@ -42,10 +48,12 @@ export const EditorContainer = () => {
 
     // Removes save message a few seconds after saving
     useEffect(() => {
-        if (savingStr === true) {
-            setTimeout(() => {
-                setSavingStr(false);
-            }, 2500);
+        let timer = setTimeout(() => {
+            if (savingStr === true) setSavingStr(false);
+        }, 2500);
+
+        return () => {
+            clearTimeout(timer);
         }
     }, [savingStr]);
 
@@ -91,4 +99,16 @@ export const EditorContainer = () => {
     );
 };
 
-export default EditorContainer;
+const mapStateToProps = (state: any, ownProps: any) => {
+    return {
+        content: state.notes.filter((item: any) => item.id === ownProps.id)[0].content
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+    return {
+        saveNote: (id: string, content: string) => dispatch({ type: 'SAVE_NOTE', id, title: '', content }),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditorContainer);
