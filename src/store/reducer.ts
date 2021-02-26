@@ -5,15 +5,17 @@ export interface Note {
     id: string;
     title: string;
     content: string;
-}
+};
 
 interface State {
     notes: Note[];
-}
+    showEditor: boolean;
+};
 
 const initialState: State = {
-    notes: localStorage.getItem('notes') ? JSON.parse(localStorage.getItem('notes') || '[]') : []
-}
+    notes: localStorage.getItem('notes') ? JSON.parse(localStorage.getItem('notes') || '[]') : [],
+    showEditor: !!localStorage.getItem('notes')
+};
 
 const saveNote = (state: State, [id, title, content]: string[]) => {
     const newNote = state.notes.filter(item => item.id === id)[0];
@@ -23,14 +25,15 @@ const saveNote = (state: State, [id, title, content]: string[]) => {
     const newNotesState = [...state.notes];
     newNotesState[index] = newNote;
     return newNotesState;
-}
+};
 
-export const reducer = (state = initialState, action: AnyAction) => {
+const reducer = (state = initialState, action: AnyAction) => {
     switch (action.type) {
         case 'CREATE_NOTE':
             return {
                 ...state,
-                notes: state.notes.concat({ id: v4(), title: '', content: '' })
+                notes: state.notes.concat({ id: v4(), title: '', content: '' }),
+                showEditor: true
             }
         case 'SAVE_NOTE':
             const newNote = saveNote(state, [action.id, action.title, action.content]);
@@ -39,6 +42,6 @@ export const reducer = (state = initialState, action: AnyAction) => {
         default:
             return state;
     }
-}
+};
 
 export default reducer;
