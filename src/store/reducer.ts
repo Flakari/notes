@@ -9,11 +9,13 @@ export interface Note {
 
 interface State {
     notes: Note[];
+    currentNoteId: string;
     showEditor: boolean;
 };
 
 const initialState: State = {
     notes: localStorage.getItem('notes') ? JSON.parse(localStorage.getItem('notes') || '[]') : [],
+    currentNoteId: '',
     showEditor: !!localStorage.getItem('notes')
 };
 
@@ -21,7 +23,13 @@ const saveNote = (state: State, [id, title, content]: string[]) => {
     const newNote = state.notes.filter(item => item.id === id)[0];
     newNote.content = content;
     newNote.title = title;
-    const index = state.notes.indexOf(newNote);
+    let index = 0;
+
+    for (let i = 0; i < state.notes.length; i++) {
+        if (state.notes[i].id === id) {
+            index = i;
+        }
+    }
     const newNotesState = [...state.notes];
     newNotesState[index] = newNote;
     return newNotesState;
@@ -39,6 +47,8 @@ const reducer = (state = initialState, action: AnyAction) => {
             const newNote = saveNote(state, [action.id, action.title, action.content]);
             localStorage.setItem('notes', JSON.stringify(newNote));
             return { ...state, notes: newNote };
+        case 'SHOW_NOTE':
+            return { ...state, currentNoteId: action.id }
         default:
             return state;
     }

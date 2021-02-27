@@ -4,8 +4,9 @@ import { Dispatch } from 'redux';
 import { Note } from '../../store/reducer';
 
 interface PropTypes {
-    addNote: () => {},
-    notes: Note[]
+    addNote: () => {};
+    showNote: (id: string) => {};
+    notes: Note[];
 }
 
 const NotesContainer = (props: PropTypes) => {
@@ -14,7 +15,11 @@ const NotesContainer = (props: PropTypes) => {
             <button onClick={props.addNote}>Create Note</button>
             <div>
                 <ul>
-                    {props.notes.map(item => <li key={item.id}>{item.title || 'Untitled'}</li>)}
+                    {props.notes.map(item => {
+                        return (
+                            <li key={item.id} onClick={() => props.showNote(item.id)}>{item.title || 'Untitled'}</li>
+                        );
+                    })}
                 </ul>
             </div>
         </div>
@@ -29,7 +34,8 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
-        addNote: () => dispatch({ type: 'CREATE_NOTE' })
+        addNote: () => dispatch({ type: 'CREATE_NOTE' }),
+        showNote: (id: string) => dispatch({ type: 'SHOW_NOTE', id })
     }
 };
 

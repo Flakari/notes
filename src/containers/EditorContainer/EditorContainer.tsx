@@ -17,8 +17,8 @@ interface PropTypes {
     content: string;
 }
 
-export const EditorContainer = (props: PropTypes) => {
-    const [editorState, setEditorState] = useState(props.content ? () => EditorState.createWithContent(convertFromRaw(JSON.parse(props.content))) : () => EditorState.createEmpty());
+export const EditorContainer = ({ id, saveNote, content }: PropTypes) => {
+    const [editorState, setEditorState] = useState(content ? () => EditorState.createWithContent(convertFromRaw(JSON.parse(content))) : () => EditorState.createEmpty());
     const contentState = editorState.getCurrentContent();
     const editorContainerRef = useRef<HTMLDivElement>(null);
     // Flags if container component has just been loaded, only changes to false when editor gets used
@@ -29,7 +29,7 @@ export const EditorContainer = (props: PropTypes) => {
     useEffect(() => {
         setSavingStr(false);
         let timer = setTimeout(() => {
-            props.saveNote(props.id, JSON.stringify(convertToRaw(contentState)));
+            saveNote(id, JSON.stringify(convertToRaw(contentState)));
             if (!appStart) {
                 setSavingStr(true);
             }
@@ -37,7 +37,7 @@ export const EditorContainer = (props: PropTypes) => {
         return () => {
             clearTimeout(timer);
         }
-    }, [contentState, appStart, props]);
+    }, [contentState, appStart, saveNote, id]);
 
     // Allows save message to appear after a key has been pressed in the editing container
     useEffect(() => {
@@ -45,6 +45,10 @@ export const EditorContainer = (props: PropTypes) => {
             setAppStart(false);
         });
     }, []);
+
+    useEffect(() => {
+        setAppStart(true);
+    }, [id]);
 
     // Removes save message a few seconds after saving
     useEffect(() => {
@@ -94,6 +98,7 @@ export const EditorContainer = (props: PropTypes) => {
                     onChange={setEditorState}
                 />
             </div>
+            <p>{id}</p>
             {savingStr ? <p>Saved!</p> : null}
         </div>
     );
