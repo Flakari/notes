@@ -19,10 +19,10 @@ const initialState: State = {
     showEditor: !!localStorage.getItem('notes')
 };
 
-const saveNote = (state: State, [id, title, content]: string[]) => {
+const saveNote = (state: State, [id, title = '', content = '']: string[]) => {
     const newNote = state.notes.filter(item => item.id === id)[0];
-    newNote.content = content;
-    newNote.title = title;
+    if (content) newNote.content = content;
+    if (title) newNote.title = title;
     let index = 0;
 
     for (let i = 0; i < state.notes.length; i++) {
@@ -35,6 +35,7 @@ const saveNote = (state: State, [id, title, content]: string[]) => {
     return newNotesState;
 };
 
+// {} on save actions to block scope newNote variable
 const reducer = (state = initialState, action: AnyAction) => {
     switch (action.type) {
         case 'CREATE_NOTE':
@@ -43,12 +44,18 @@ const reducer = (state = initialState, action: AnyAction) => {
                 notes: state.notes.concat({ id: v4(), title: '', content: '' }),
                 showEditor: true
             }
-        case 'SAVE_NOTE':
-            const newNote = saveNote(state, [action.id, action.title, action.content]);
+        case 'SAVE_NOTE': {
+            const newNote = saveNote(state, [action.id, null, action.content]);
             localStorage.setItem('notes', JSON.stringify(newNote));
             return { ...state, notes: newNote };
+        }
+        case 'SAVE_TITLE': {
+            const newNote = saveNote(state, [action.id, action.title, null]);
+            localStorage.setItem('notes', JSON.stringify(newNote));
+            return { ...state, notes: newNote };
+        }
         case 'SHOW_NOTE':
-            return { ...state, currentNoteId: action.id }
+            return { ...state, currentNoteId: action.id };
         default:
             return state;
     }

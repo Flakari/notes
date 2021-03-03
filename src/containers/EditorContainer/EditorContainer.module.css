@@ -23,3 +23,12 @@
 .UnderlineButton {
     text-decoration: underline;
 }
+
+#titleInput {
+    font-size: 2em;
+    text-align: center;
+    border: none;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 15px;
+}

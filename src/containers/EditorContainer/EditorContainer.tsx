@@ -14,16 +14,19 @@ const inlineStyles = [
 interface PropTypes {
     id: string;
     saveNote: (id: string, content: string) => {};
+    saveTitle: (id: string, title: string) => {};
     content: string;
+    title: string;
 }
 
-export const EditorContainer = ({ id, saveNote, content }: PropTypes) => {
+const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes) => {
     const [editorState, setEditorState] = useState(content ? () => EditorState.createWithContent(convertFromRaw(JSON.parse(content))) : () => EditorState.createEmpty());
     const contentState = editorState.getCurrentContent();
     const editorContainerRef = useRef<HTMLDivElement>(null);
     // Flags if container component has just been loaded, only changes to false when editor gets used
     const [appStart, setAppStart] = useState(true);
     const [savingStr, setSavingStr] = useState(false);
+    const [titleValue, setTitleValue] = useState(title || 'Untitled');
 
     // Debounce save feature
     useEffect(() => {
@@ -82,8 +85,14 @@ export const EditorContainer = ({ id, saveNote, content }: PropTypes) => {
         }
     };
 
+    const titleChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTitleValue(e.target.value);
+        saveTitle(id, e.target.value);
+    }
+
     return (
         <div>
+            <input id={classes.titleInput} type="text" value={titleValue} onChange={titleChangeHandler} placeholder='Untitled' />
             {inlineStyles.map(style => (
                 <button
                     key={style.type}
@@ -105,14 +114,17 @@ export const EditorContainer = ({ id, saveNote, content }: PropTypes) => {
 };
 
 const mapStateToProps = (state: any, ownProps: any) => {
+    const noteInfo = state.notes.filter((item: any) => item.id === ownProps.id)[0];
     return {
-        content: state.notes.filter((item: any) => item.id === ownProps.id)[0].content
+        content: noteInfo.content,
+        title: noteInfo.title
     }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
-        saveNote: (id: string, content: string) => dispatch({ type: 'SAVE_NOTE', id, title: '', content }),
+        saveNote: (id: string, content: string) => dispatch({ type: 'SAVE_NOTE', id, content }),
+        saveTitle: (id: string, title: string) => dispatch({ type: 'SAVE_TITLE', id, title })
     }
 }
 
