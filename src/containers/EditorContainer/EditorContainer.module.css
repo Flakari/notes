@@ -8,8 +8,8 @@
 }
 
 .InlineButton {
-    height: 30px;
-    width: 30px;
+    height: 40px;
+    width: 40px;
 }
 
 .BoldButton {
@@ -22,6 +22,10 @@
 
 .UnderlineButton {
     text-decoration: underline;
+}
+
+.StrikethroughButton {
+    text-decoration: line-through;
 }
 
 #titleInput {

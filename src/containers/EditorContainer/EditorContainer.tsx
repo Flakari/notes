@@ -8,8 +8,19 @@ import { connect } from 'react-redux';
 const inlineStyles = [
     { icon: 'B', type: 'BOLD', class: classes.BoldButton },
     { icon: 'I', type: 'ITALIC', class: classes.ItalicButton },
-    { icon: 'U', type: 'UNDERLINE', class: classes.UnderlineButton }
+    { icon: 'U', type: 'UNDERLINE', class: classes.UnderlineButton },
+    { icon: '-S-', type: 'STRIKETHROUGH', class: classes.StrikethroughButton },
+    { icon: 'red', type: 'RED' }
 ];
+
+const styleMap = {
+    'STRIKETHROUGH': {
+        textDecoration: 'line-through'
+    },
+    'RED': {
+        color: 'rgb(255, 0, 0)'
+    }
+};
 
 interface PropTypes {
     id: string;
@@ -103,6 +114,7 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
             <div ref={editorContainerRef} className={classes.EditorContainer}>
                 <Editor
                     handleKeyCommand={handleKeyCommand}
+                    customStyleMap={styleMap}
                     editorState={editorState}
                     onChange={setEditorState}
                 />
@@ -116,16 +128,16 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
 const mapStateToProps = (state: any, ownProps: any) => {
     const noteInfo = state.notes.filter((item: any) => item.id === ownProps.id)[0];
     return {
-        content: noteInfo.content,
-        title: noteInfo.title
-    }
-}
+        content: noteInfo?.content,
+        title: noteInfo?.title
+    };
+};
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
         saveNote: (id: string, content: string) => dispatch({ type: 'SAVE_NOTE', id, content }),
         saveTitle: (id: string, title: string) => dispatch({ type: 'SAVE_TITLE', id, title })
-    }
-}
+    };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditorContainer);

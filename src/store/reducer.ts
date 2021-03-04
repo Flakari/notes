@@ -19,21 +19,31 @@ const initialState: State = {
     showEditor: !!localStorage.getItem('notes')
 };
 
-const saveNote = (state: State, [id, title = '', content = '']: string[]) => {
-    const newNote = state.notes.filter(item => item.id === id)[0];
-    if (content) newNote.content = content;
-    if (title) newNote.title = title;
-    let index = 0;
-
+const findNoteIndex = (state: State, id: string): number => {
     for (let i = 0; i < state.notes.length; i++) {
         if (state.notes[i].id === id) {
-            index = i;
+            return i;
         }
     }
+    return 0;
+}
+
+const saveNote = (state: State, [id, title = '', content = '']: string[]) => {
+    const newNote = state.notes.filter(item => item.id === id)[0];
+    if (newNote === undefined) return [...state.notes]; // For if saveNote is called on deleted note
+    if (content) newNote.content = content;
+    if (title) newNote.title = title;
+
     const newNotesState = [...state.notes];
-    newNotesState[index] = newNote;
+    newNotesState[findNoteIndex(state, id)] = newNote;
     return newNotesState;
 };
+
+const deleteNote = (state: State, id: string) => {
+    const newNotesState = [...state.notes];
+    newNotesState.splice(findNoteIndex(state, id), 1);
+    return newNotesState;
+}
 
 // {} on save actions to block scope newNote variable
 const reducer = (state = initialState, action: AnyAction) => {
@@ -54,8 +64,17 @@ const reducer = (state = initialState, action: AnyAction) => {
             localStorage.setItem('notes', JSON.stringify(newNote));
             return { ...state, notes: newNote };
         }
+        case 'DELETE_NOTE': {
+            const newNote = deleteNote(state, action.id);
+            localStorage.setItem('notes', JSON.stringify(newNote));
+            if (action.id === state.currentNoteId) {
+                return { ...state, notes: newNote, currentNoteId: '', showEditor: false };
+            } else {
+                return { ...state, notes: newNote };
+            }
+        }
         case 'SHOW_NOTE':
-            return { ...state, currentNoteId: action.id };
+            return { ...state, currentNoteId: action.id, showEditor: true };
         default:
             return state;
     }
