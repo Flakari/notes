@@ -1,0 +1,68 @@
+{
+    "basic": [
+        {
+            "name": "white",
+            "color": "#FFFFFF"
+        },
+        {
+            "name": "silver",
+            "color": "#C0C0C0"
+        },
+        {
+            "name": "gray",
+            "color": "#808080"
+        },
+        {
+            "name": "black",
+            "color": "#000000"
+        },
+        {
+            "name": "red",
+            "color": "#FF0000"
+        },
+        {
+            "name": "maroon",
+            "color": "#800000"
+        },
+        {
+            "name": "yellow",
+            "color": "#FFFF00"
+        },
+        {
+            "name": "olive",
+            "color": "#808000"
+        },
+        {
+            "name": "lime",
+            "color": "#00FF00"
+        },
+        {
+            "name": "green",
+            "color": "#008000"
+        },
+        {
+            "name": "aqua",
+            "color": "#00FFFF"
+        },
+        {
+            "name": "teal",
+            "color": "#008080"
+        },
+        {
+            "name": "blue",
+            "color": "#0000FF"
+        },
+        {
+            "name": "navy",
+            "color": "#000080"
+        },
+        {
+            "name": "fuchsia",
+            "color": "#FF00FF"
+        },
+        {
+            "name": "purple",
+            "color": "#800080"
+        }
+    ]
+}

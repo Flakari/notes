@@ -30,7 +30,6 @@ const findNoteIndex = (state: State, id: string): number => {
 
 const saveNote = (state: State, [id, title = '', content = '']: string[]) => {
     const newNote = state.notes.filter(item => item.id === id)[0];
-    if (newNote === undefined) return [...state.notes]; // For if saveNote is called on deleted note
     if (content) newNote.content = content;
     if (title) newNote.title = title;
 
@@ -67,11 +66,7 @@ const reducer = (state = initialState, action: AnyAction) => {
         case 'DELETE_NOTE': {
             const newNote = deleteNote(state, action.id);
             localStorage.setItem('notes', JSON.stringify(newNote));
-            if (action.id === state.currentNoteId) {
-                return { ...state, notes: newNote, currentNoteId: '', showEditor: false };
-            } else {
-                return { ...state, notes: newNote };
-            }
+            return { ...state, notes: newNote };
         }
         case 'SHOW_NOTE':
             return { ...state, currentNoteId: action.id, showEditor: true };

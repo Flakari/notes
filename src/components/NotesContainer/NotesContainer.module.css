@@ -2,3 +2,18 @@
     display: inline-block;
     margin-left: 10px;
 }
+
+.noteContainer {
+    width: 100%;
+    position: absolute;
+    height: 300px;
+    background-color: grey;
+}
+
+.expanded {
+    display: block;
+}
+
+.collapsed {
+    display: none;
+}

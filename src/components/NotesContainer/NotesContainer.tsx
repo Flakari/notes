@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -9,18 +10,31 @@ interface PropTypes {
     showNote: (id: string) => {};
     deleteNote: (id: string) => {};
     notes: Note[];
+    currentNoteId: string;
 }
 
 const NotesContainer = (props: PropTypes) => {
+    const [showFull, setShowFull] = useState(false);
+
+    const containerToggle = () => {
+        setShowFull(prevState => !prevState);
+    };
+
+    const itemClickHandler = (id: string) => {
+        props.showNote(id);
+        containerToggle();
+    };
+
     return (
         <div>
             <button onClick={props.addNote}>Create Note</button>
-            <div>
+            <button onClick={containerToggle}>Expand Container</button>
+            <div className={[classes.noteContainer, showFull ? classes.expanded : classes.collapsed].join(' ')}>
                 <ul>
-                    {props.notes.map(item => {
+                    {props.notes.filter(item => item.id !== props.currentNoteId).map(item => {
                         return (
                             <li key={item.id}>
-                                <span onClick={() => props.showNote(item.id)}>{item.title || 'Untitled'}</span>
+                                <span onClick={() => itemClickHandler(item.id)}>{item.title || 'Untitled'}</span>
                                 <button className={classes.btn} onClick={() => props.deleteNote(item.id)}>X</button>
                             </li>
                         );
@@ -33,7 +47,8 @@ const NotesContainer = (props: PropTypes) => {
 
 const mapStateToProps = (state: any) => {
     return {
-        notes: state.notes
+        notes: state.notes,
+        currentNoteId: state.currentNoteId
     }
 }
 

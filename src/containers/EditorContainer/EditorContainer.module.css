@@ -28,11 +28,35 @@
     text-decoration: line-through;
 }
 
-#titleInput {
+#TitleInput {
     font-size: 2em;
     text-align: center;
     border: none;
     display: block;
     margin: 0 auto;
     margin-bottom: 15px;
+}
+
+.ButtonContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.InlineSubButton {
+    padding: none;
+    box-sizing: border-box;
+    position: relative;
+    top: -1px;
+    height: 40px;
+    width: 20px;
+}
+
+.InlineSubButton > div {
+    box-sizing: border-box;
+    position: relative;
+    right: 5px;
+    width: 10px;
+    height: 10px;
+    border: transparent solid 5px;
+    border-top: black solid 5px;
 }
