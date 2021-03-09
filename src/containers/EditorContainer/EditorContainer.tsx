@@ -1,19 +1,11 @@
 import { SyntheticEvent, useEffect, useRef, useState } from 'react';
-import { convertToRaw, convertFromRaw, Editor, EditorState, RichUtils } from 'draft-js';
+import { convertToRaw, convertFromRaw, Editor, EditorState, RichUtils, Modifier } from 'draft-js';
 
 import classes from './EditorContainer.module.css';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import ColorContainer from '../ColorContainer/ColorContainer';
-
-const inlineStyles = [
-    { icon: 'B', type: 'BOLD', class: classes.BoldButton },
-    { icon: 'I', type: 'ITALIC', class: classes.ItalicButton },
-    { icon: 'U', type: 'UNDERLINE', class: classes.UnderlineButton },
-    { icon: '-S-', type: 'STRIKETHROUGH', class: classes.StrikethroughButton },
-    { icon: 'color', type: 'TEXTCOLOR', hasMenu: true },
-    { icon: 'highlight', type: 'HIGHLIGHT', hasMenu: true }
-];
+import colorData from '../../colors.json';
 
 interface PropTypes {
     id: string;
@@ -21,6 +13,19 @@ interface PropTypes {
     saveTitle: (id: string, title: string) => {};
     content: string;
     title: string;
+}
+
+const textColorMap: { [key: string]: {} } = {};
+const highlightColorMap: { [key: string]: {} } = {};
+
+const textColorArr: string[] = [];
+const highlightColorArr: string[] = [];
+
+for (let item of colorData.basic) {
+    textColorMap[`${item.name}-COLOR`] = { color: item.color };
+    textColorArr.push(`${item.name}-COLOR`);
+    highlightColorMap[`${item.name}-HIGHLIGHT`] = { backgroundColor: item.color };
+    highlightColorArr.push(`${item.name}-HIGHLIGHT`);
 }
 
 const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes) => {
@@ -31,22 +36,28 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
     const [appStart, setAppStart] = useState(true);
     const [savingStr, setSavingStr] = useState(false);
     const [titleValue, setTitleValue] = useState(title || 'Untitled');
-    const [textColor, setTextColor] = useState('black');
+    const [currentTextColor, setCurrentTextColor] = useState('');
     const [showTextColor, setShowTextColor] = useState(false);
-    const [highlightColor, setHighlightColor] = useState('none');
+    const [currentHighlightColor, setCurrentHighlightColor] = useState('');
+
     const [showHighlightColor, setShowHighlightColor] = useState(false);
 
     const styleMap = {
         'STRIKETHROUGH': {
             textDecoration: 'line-through'
         },
-        'TEXTCOLOR': {
-            color: textColor
-        },
-        'HIGHLIGHT': {
-            backgroundColor: highlightColor
-        }
+        ...textColorMap,
+        ...highlightColorMap
     };
+
+    const inlineStyles = [
+        { icon: 'B', type: 'BOLD', class: classes.BoldButton },
+        { icon: 'I', type: 'ITALIC', class: classes.ItalicButton },
+        { icon: 'U', type: 'UNDERLINE', class: classes.UnderlineButton },
+        { icon: '-S-', type: 'STRIKETHROUGH', class: classes.StrikethroughButton },
+        { icon: 'color', type: 'TEXTCOLOR', color: currentTextColor, hasMenu: true },
+        { icon: 'highlight', type: 'HIGHLIGHT', color: currentHighlightColor, hasMenu: true }
+    ];
 
     // Debounce save feature
     useEffect(() => {
@@ -118,13 +129,54 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
         }
     };
 
-    const colorChange = (type: string, color: string) => {
+    // Removes all colors stylings based on current selection in editor
+    const removeColorStyles = (type: string) => {
+        let styles;
         if (type === 'TEXTCOLOR') {
-            setTextColor(color);
+            styles = textColorArr;
+        } else {
+            styles = highlightColorArr;
+        }
+
+        const contentWithoutStyles = styles.reduce(
+            (newContentState, style) =>
+                Modifier.removeInlineStyle(
+                    newContentState,
+                    editorState.getSelection(),
+                    style
+                ),
+            contentState
+        );
+
+        return EditorState.push(
+            editorState,
+            contentWithoutStyles,
+            'change-inline-style'
+        );
+    };
+
+    const colorChange = (e: SyntheticEvent, type: string, color: string) => {
+        e.preventDefault();
+        const newStyle = Modifier.applyInlineStyle(
+            removeColorStyles(type).getCurrentContent(),
+            editorState.getSelection(),
+            type === 'TEXTCOLOR' ? `${color}-COLOR` : `${color}-HIGHLIGHT`
+        );
+        setEditorState(EditorState.push(
+            editorState,
+            newStyle,
+            'change-inline-style'
+        ));
+
+        if (type === 'TEXTCOLOR') {
+            setCurrentTextColor(`${color}-COLOR`);
             setShowTextColor(false);
         } else {
-            setHighlightColor(color);
+            setCurrentHighlightColor(`${color}-HIGHLIGHT`);
             setShowHighlightColor(false);
+        }
+        if (appStart) {
+            setAppStart(false);
         }
     };
 
@@ -137,7 +189,7 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
                         <button
                             key={style.type}
                             className={[classes.InlineButton, style.class].join(' ')}
-                            onMouseDown={(e) => onInlineStyleClick(e, style.type)}
+                            onMouseDown={(e) => onInlineStyleClick(e, 'color' in style ? style.color! : style.type)}
                         >{style.icon}</button>
                     );
                     if ('hasMenu' in style) {
@@ -150,7 +202,7 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
                         return (
                             <div key={style.type}>
                                 {button}
-                                <button onMouseDown={() => showButton(style.type)} className={classes.InlineSubButton}><div></div></button>
+                                <button key={`${style.type}-SUB`} onMouseDown={() => showButton(style.type)} className={classes.InlineSubButton}><div></div></button>
                                 {show ? <ColorContainer changeColor={colorChange} type={style.type} /> : null}
                             </div>
                         );

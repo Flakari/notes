@@ -1,9 +1,10 @@
 import classes from './ColorContainer.module.css';
 import data from '../../colors.json';
+import { SyntheticEvent } from 'react';
 
 interface PropTyes {
     type: string;
-    changeColor: (type: string, color: string) => void
+    changeColor: (e: SyntheticEvent, type: string, color: string) => void
 }
 
 const ColorContainer = (props: PropTyes) => (
@@ -11,7 +12,13 @@ const ColorContainer = (props: PropTyes) => (
         <ul>
             {data.basic.map(item => {
                 return (
-                    <li key={item.name} onClick={() => props.changeColor(props.type, item.color)}><div style={{ background: item.color }}></div>{item.name}</li>
+                    <li
+                        key={item.name}
+                        onClick={(e) => props.changeColor(e, props.type, item.name)}
+                    >
+                        <div style={{ background: item.color }}></div>
+                        {item.name}
+                    </li>
                 );
             })}
         </ul>
