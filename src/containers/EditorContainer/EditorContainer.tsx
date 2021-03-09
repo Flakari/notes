@@ -157,16 +157,20 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
 
     const colorChange = (e: SyntheticEvent, type: string, color: string) => {
         e.preventDefault();
-        const newStyle = Modifier.applyInlineStyle(
-            removeColorStyles(type).getCurrentContent(),
-            editorState.getSelection(),
-            type === 'TEXTCOLOR' ? `${color}-COLOR` : `${color}-HIGHLIGHT`
-        );
-        setEditorState(EditorState.push(
-            editorState,
-            newStyle,
-            'change-inline-style'
-        ));
+        if ((type === 'TEXTCOLOR' && color === 'black') || (type === 'HIGHLIGHT' && color === 'white')) {
+            setEditorState(removeColorStyles(type));
+        } else {
+            const newStyle = Modifier.applyInlineStyle(
+                removeColorStyles(type).getCurrentContent(),
+                editorState.getSelection(),
+                type === 'TEXTCOLOR' ? `${color}-COLOR` : `${color}-HIGHLIGHT`
+            );
+            setEditorState(EditorState.push(
+                editorState,
+                newStyle,
+                'change-inline-style'
+            ));
+        }
 
         if (type === 'TEXTCOLOR') {
             setCurrentTextColor(`${color}-COLOR`);
