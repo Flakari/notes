@@ -7,7 +7,7 @@ export interface Note {
     content: string;
 };
 
-interface State {
+export interface State {
     notes: Note[];
     currentNoteId: string;
     showEditor: boolean;

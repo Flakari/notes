@@ -4,8 +4,9 @@ import { convertToRaw, convertFromRaw, Editor, EditorState, RichUtils, Modifier 
 import classes from './EditorContainer.module.css';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import ColorContainer from '../ColorContainer/ColorContainer';
+import NoteTitle from '../NoteTitle/NoteTitle';
 import colorData from '../../colors.json';
+import EditorButtonContainer from '../EditorButtonContainer/EditorButtonContainer';
 
 interface PropTypes {
     id: string;
@@ -35,12 +36,8 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
     // Flags if container component has just been loaded, only changes to false when editor gets used
     const [appStart, setAppStart] = useState(true);
     const [savingStr, setSavingStr] = useState(false);
-    const [titleValue, setTitleValue] = useState(title || 'Untitled');
     const [currentTextColor, setCurrentTextColor] = useState('');
-    const [showTextColor, setShowTextColor] = useState(false);
     const [currentHighlightColor, setCurrentHighlightColor] = useState('');
-
-    const [showHighlightColor, setShowHighlightColor] = useState(false);
 
     const styleMap = {
         'STRIKETHROUGH': {
@@ -116,19 +113,6 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
         }
     };
 
-    const titleChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTitleValue(e.target.value);
-        saveTitle(id, e.target.value);
-    };
-
-    const showButton = (type: string) => {
-        if (type === 'TEXTCOLOR') {
-            setShowTextColor(prevState => !prevState);
-        } else {
-            setShowHighlightColor(prevState => !prevState);
-        }
-    };
-
     // Removes all colors stylings based on current selection in editor
     const removeColorStyles = (type: string) => {
         let styles;
@@ -155,6 +139,7 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
         );
     };
 
+    // Overrides color or highlight styles, first removing appropriate style in range and inserting new
     const colorChange = (e: SyntheticEvent, type: string, color: string) => {
         e.preventDefault();
         if ((type === 'TEXTCOLOR' && color === 'black') || (type === 'HIGHLIGHT' && color === 'white')) {
@@ -173,11 +158,9 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
         }
 
         if (type === 'TEXTCOLOR') {
-            setCurrentTextColor(`${color}-COLOR`);
-            setShowTextColor(false);
+            setCurrentTextColor(color);
         } else {
-            setCurrentHighlightColor(`${color}-HIGHLIGHT`);
-            setShowHighlightColor(false);
+            setCurrentHighlightColor(color);
         }
         if (appStart) {
             setAppStart(false);
@@ -186,34 +169,12 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
 
     return (
         <div>
-            <input id={classes.TitleInput} type="text" value={titleValue} onChange={titleChangeHandler} placeholder='Untitled' />
-            <div className={classes.ButtonContainer}>
-                {inlineStyles.map(style => {
-                    const button = (
-                        <button
-                            key={style.type}
-                            className={[classes.InlineButton, style.class].join(' ')}
-                            onMouseDown={(e) => onInlineStyleClick(e, 'color' in style ? style.color! : style.type)}
-                        >{style.icon}</button>
-                    );
-                    if ('hasMenu' in style) {
-                        let show;
-                        if (style.type === 'TEXTCOLOR') {
-                            show = showTextColor;
-                        } else {
-                            show = showHighlightColor;
-                        }
-                        return (
-                            <div key={style.type}>
-                                {button}
-                                <button key={`${style.type}-SUB`} onMouseDown={() => showButton(style.type)} className={classes.InlineSubButton}><div></div></button>
-                                {show ? <ColorContainer changeColor={colorChange} type={style.type} /> : null}
-                            </div>
-                        );
-                    }
-                    return button;
-                })}
-            </div>
+            <NoteTitle id={id} saveTitle={saveTitle} />
+            <EditorButtonContainer
+                inlineStyles={inlineStyles}
+                colorChange={colorChange}
+                onInlineStyleClick={onInlineStyleClick}
+            />
             <div ref={editorContainerRef} className={classes.EditorContainer}>
                 <Editor
                     handleKeyCommand={handleKeyCommand}
