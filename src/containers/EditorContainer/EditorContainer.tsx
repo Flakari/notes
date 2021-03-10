@@ -13,23 +13,17 @@ interface PropTypes {
     saveNote: (id: string, content: string) => {};
     saveTitle: (id: string, title: string) => {};
     content: string;
-    title: string;
 }
 
 const textColorMap: { [key: string]: {} } = {};
 const highlightColorMap: { [key: string]: {} } = {};
 
-const textColorArr: string[] = [];
-const highlightColorArr: string[] = [];
-
 for (let item of colorData.basic) {
     textColorMap[`${item.name}-COLOR`] = { color: item.color };
-    textColorArr.push(`${item.name}-COLOR`);
     highlightColorMap[`${item.name}-HIGHLIGHT`] = { backgroundColor: item.color };
-    highlightColorArr.push(`${item.name}-HIGHLIGHT`);
 }
 
-const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes) => {
+const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
     const [editorState, setEditorState] = useState(content ? () => EditorState.createWithContent(convertFromRaw(JSON.parse(content))) : () => EditorState.createEmpty());
     const contentState = editorState.getCurrentContent();
     const editorContainerRef = useRef<HTMLDivElement>(null);
@@ -77,10 +71,6 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
         });
     }, []);
 
-    useEffect(() => {
-        setAppStart(true);
-    }, [id]);
-
     // Removes save message a few seconds after saving
     useEffect(() => {
         let timer = setTimeout(() => {
@@ -104,67 +94,8 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
         }
     };
 
-    // Handles editor button commands for inline styles
-    const onInlineStyleClick = (e: SyntheticEvent, command: string) => {
-        e.preventDefault();
-        setEditorState(RichUtils.toggleInlineStyle(editorState, command));
-        if (appStart) {
-            setAppStart(false);
-        }
-    };
-
-    // Removes all colors stylings based on current selection in editor
-    const removeColorStyles = (type: string) => {
-        let styles;
-        if (type === 'TEXTCOLOR') {
-            styles = textColorArr;
-        } else {
-            styles = highlightColorArr;
-        }
-
-        const contentWithoutStyles = styles.reduce(
-            (newContentState, style) =>
-                Modifier.removeInlineStyle(
-                    newContentState,
-                    editorState.getSelection(),
-                    style
-                ),
-            contentState
-        );
-
-        return EditorState.push(
-            editorState,
-            contentWithoutStyles,
-            'change-inline-style'
-        );
-    };
-
-    // Overrides color or highlight styles, first removing appropriate style in range and inserting new
-    const colorChange = (e: SyntheticEvent, type: string, color: string) => {
-        e.preventDefault();
-        if ((type === 'TEXTCOLOR' && color === 'black') || (type === 'HIGHLIGHT' && color === 'white')) {
-            setEditorState(removeColorStyles(type));
-        } else {
-            const newStyle = Modifier.applyInlineStyle(
-                removeColorStyles(type).getCurrentContent(),
-                editorState.getSelection(),
-                type === 'TEXTCOLOR' ? `${color}-COLOR` : `${color}-HIGHLIGHT`
-            );
-            setEditorState(EditorState.push(
-                editorState,
-                newStyle,
-                'change-inline-style'
-            ));
-        }
-
-        if (type === 'TEXTCOLOR') {
-            setCurrentTextColor(color);
-        } else {
-            setCurrentHighlightColor(color);
-        }
-        if (appStart) {
-            setAppStart(false);
-        }
+    const removeComponentLoadedState = () => {
+        if (appStart) setAppStart(false);
     };
 
     return (
@@ -172,8 +103,12 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
             <NoteTitle id={id} saveTitle={saveTitle} />
             <EditorButtonContainer
                 inlineStyles={inlineStyles}
-                colorChange={colorChange}
-                onInlineStyleClick={onInlineStyleClick}
+                editorState={editorState}
+                setEditorState={setEditorState}
+                contentState={contentState}
+                removeComponentLoadedState={removeComponentLoadedState}
+                setCurrentTextColor={setCurrentTextColor}
+                setCurrentHighlightColor={setCurrentHighlightColor}
             />
             <div ref={editorContainerRef} className={classes.EditorContainer}>
                 <Editor
@@ -192,8 +127,7 @@ const EditorContainer = ({ id, saveNote, saveTitle, content, title }: PropTypes)
 const mapStateToProps = (state: any, ownProps: any) => {
     const noteInfo = state.notes.filter((item: any) => item.id === ownProps.id)[0];
     return {
-        content: noteInfo?.content,
-        title: noteInfo?.title
+        content: noteInfo?.content
     };
 };
 
