@@ -6,6 +6,7 @@
     text-align: left;
     width: 120px;
     box-sizing: border-box;
+    z-index: 2;
 }
 
 .ColorContainer ul {

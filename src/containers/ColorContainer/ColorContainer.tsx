@@ -4,13 +4,14 @@ import { SyntheticEvent } from 'react';
 
 interface PropTyes {
     type: string;
-    changeColor: (e: SyntheticEvent, type: string, color: string) => void;
+    changeColor: (type: string, color: string) => void;
     showButton: (type: string) => void
 }
 
 const ColorContainer = (props: PropTyes) => {
     const clickHandler = (e: SyntheticEvent, name: string) => {
-        props.changeColor(e, props.type, name);
+        e.preventDefault();
+        props.changeColor(props.type, name);
         props.showButton(props.type);
     };
 

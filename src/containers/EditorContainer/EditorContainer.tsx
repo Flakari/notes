@@ -6,6 +6,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import NoteTitle from '../NoteTitle/NoteTitle';
 import colorData from '../../colors.json';
+import fontSizes from '../../font-sizes.json';
 import EditorButtonContainer from '../EditorButtonContainer/EditorButtonContainer';
 import 'draft-js/dist/Draft.css';
 
@@ -18,10 +19,15 @@ interface PropTypes {
 
 const textColorMap: { [key: string]: {} } = {};
 const highlightColorMap: { [key: string]: {} } = {};
+const fontSizeMap: { [key: string]: {} } = {};
 
 for (let item of colorData.basic) {
     textColorMap[`${item.name}-COLOR`] = { color: item.color };
     highlightColorMap[`${item.name}-HIGHLIGHT`] = { backgroundColor: item.color };
+}
+
+for (let item of fontSizes.sizes) {
+    fontSizeMap[`${item}-FONTSIZE`] = { fontSize: item };
 }
 
 const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
@@ -31,8 +37,6 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
     // Flags if container component has just been loaded, only changes to false when editor gets used
     const [appStart, setAppStart] = useState(true);
     const [savingStr, setSavingStr] = useState(false);
-    const [currentTextColor, setCurrentTextColor] = useState('');
-    const [currentHighlightColor, setCurrentHighlightColor] = useState('');
 
     const styleMap = {
         'STRIKETHROUGH': {
@@ -47,19 +51,9 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
             verticalAlign: 'sub'
         },
         ...textColorMap,
-        ...highlightColorMap
+        ...highlightColorMap,
+        ...fontSizeMap
     };
-
-    const inlineStyles = [
-        { icon: 'bold', type: 'BOLD' },
-        { icon: 'italic', type: 'ITALIC' },
-        { icon: 'underline', type: 'UNDERLINE' },
-        { icon: 'strikethrough', type: 'STRIKETHROUGH' },
-        { icon: 'font', type: 'TEXTCOLOR', color: currentTextColor, hasMenu: true },
-        { icon: 'highlighter', type: 'HIGHLIGHT', color: currentHighlightColor, hasMenu: true },
-        { icon: 'superscript', type: 'SUPERSCRIPT' },
-        { icon: 'subscript', type: 'SUBSCRIPT' }
-    ];
 
     // Debounce save feature
     useEffect(() => {
@@ -113,13 +107,10 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
         <div>
             <NoteTitle id={id} saveTitle={saveTitle} />
             <EditorButtonContainer
-                inlineStyles={inlineStyles}
                 editorState={editorState}
                 setEditorState={setEditorState}
                 contentState={contentState}
                 removeComponentLoadedState={removeComponentLoadedState}
-                setCurrentTextColor={setCurrentTextColor}
-                setCurrentHighlightColor={setCurrentHighlightColor}
             />
             <div ref={editorContainerRef} className={classes.EditorContainer}>
                 <Editor
