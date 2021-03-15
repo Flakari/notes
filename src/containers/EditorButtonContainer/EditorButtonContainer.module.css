@@ -3,22 +3,6 @@
     width: 40px;
 }
 
-.BoldButton {
-    font-weight: bold;
-}
-
-.ItalicButton {
-    font-style: italic;
-}
-
-.UnderlineButton {
-    text-decoration: underline;
-}
-
-.StrikethroughButton {
-    text-decoration: line-through;
-}
-
 .ButtonContainer {
     display: flex;
     justify-content: center;

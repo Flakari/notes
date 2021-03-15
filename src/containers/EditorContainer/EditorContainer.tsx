@@ -1,5 +1,5 @@
-import { SyntheticEvent, useEffect, useRef, useState } from 'react';
-import { convertToRaw, convertFromRaw, Editor, EditorState, RichUtils, Modifier } from 'draft-js';
+import { useEffect, useRef, useState } from 'react';
+import { convertToRaw, convertFromRaw, Editor, EditorState, RichUtils } from 'draft-js';
 
 import classes from './EditorContainer.module.css';
 import { Dispatch } from 'redux';
@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import NoteTitle from '../NoteTitle/NoteTitle';
 import colorData from '../../colors.json';
 import EditorButtonContainer from '../EditorButtonContainer/EditorButtonContainer';
+import 'draft-js/dist/Draft.css';
 
 interface PropTypes {
     id: string;
@@ -37,17 +38,27 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
         'STRIKETHROUGH': {
             textDecoration: 'line-through'
         },
+        'SUPERSCRIPT': {
+            fontSize: '.83em',
+            verticalAlign: 'super'
+        },
+        'SUBSCRIPT': {
+            fontSize: '.83em',
+            verticalAlign: 'sub'
+        },
         ...textColorMap,
         ...highlightColorMap
     };
 
     const inlineStyles = [
-        { icon: 'B', type: 'BOLD', class: classes.BoldButton },
-        { icon: 'I', type: 'ITALIC', class: classes.ItalicButton },
-        { icon: 'U', type: 'UNDERLINE', class: classes.UnderlineButton },
-        { icon: '-S-', type: 'STRIKETHROUGH', class: classes.StrikethroughButton },
-        { icon: 'color', type: 'TEXTCOLOR', color: currentTextColor, hasMenu: true },
-        { icon: 'highlight', type: 'HIGHLIGHT', color: currentHighlightColor, hasMenu: true }
+        { icon: 'bold', type: 'BOLD' },
+        { icon: 'italic', type: 'ITALIC' },
+        { icon: 'underline', type: 'UNDERLINE' },
+        { icon: 'strikethrough', type: 'STRIKETHROUGH' },
+        { icon: 'font', type: 'TEXTCOLOR', color: currentTextColor, hasMenu: true },
+        { icon: 'highlighter', type: 'HIGHLIGHT', color: currentHighlightColor, hasMenu: true },
+        { icon: 'superscript', type: 'SUPERSCRIPT' },
+        { icon: 'subscript', type: 'SUBSCRIPT' }
     ];
 
     // Debounce save feature
