@@ -23,6 +23,15 @@ for (let item of colorData.basic) {
     highlightColorArr.push(`${item.name}-HIGHLIGHT`);
 }
 
+const headers = [
+    'header-one',
+    'header-two',
+    'header-three',
+    'header-four',
+    'header-five',
+    'header-six'
+];
+
 const DEFAULT_TEXT_SIZE = 16;
 
 const EditorButtonContainer = (props: PropTypes) => {
@@ -41,6 +50,15 @@ const EditorButtonContainer = (props: PropTypes) => {
         { icon: 'superscript', type: 'SUPERSCRIPT', btnType: 'button' },
         { icon: 'subscript', type: 'SUBSCRIPT', btnType: 'button' },
         { btnType: 'select', type: 'FONTSIZE' }
+    ];
+
+    const blockStyles = [
+        { btnType: 'select', type: 'headers' },
+        { icon: 'list-ul', type: 'unordered-list-item', btnType: 'button' },
+        { icon: 'list-ol', type: 'ordered-list-item', btnType: 'button' },
+        { icon: 'quote-right', type: 'blockquote', btnType: 'button' },
+        { icon: 'code', type: 'code-block', btnType: 'button' },
+        { icon: 'remove-format', type: 'unstyled', btnType: 'button' },
     ];
 
     const showButton = (type: string) => {
@@ -126,7 +144,12 @@ const EditorButtonContainer = (props: PropTypes) => {
         }
         props.setEditorState(RichUtils.toggleInlineStyle(newEditorState, type));
         props.removeComponentLoadedState();
-    }
+    };
+
+    const onBlockStyleClick = (command: string) => {
+        props.setEditorState(RichUtils.toggleBlockType(props.editorState, command));
+        props.removeComponentLoadedState();
+    };
 
     return (
         <div className={classes.ButtonContainer}>
@@ -137,6 +160,7 @@ const EditorButtonContainer = (props: PropTypes) => {
                 let button;
                 if (style.btnType === 'button') {
                     button = <EditorButton
+                        key={style.type}
                         type={style.type}
                         icon={style.icon}
                         hasMenu={style.hasMenu}
@@ -146,12 +170,37 @@ const EditorButtonContainer = (props: PropTypes) => {
                     />;
                 }
 
-                const selectFn = fontSizeChange;
+                if (style.btnType === 'select') {
+                    button = <EditorDropdown
+                        key={style.type}
+                        options={fontSizes.sizes}
+                        fn={fontSizeChange}
+                        type={style.type}
+                        default='16'
+                    />;
+                }
+
+                return button;
+            })}
+            {blockStyles.map(style => {
+                let button;
+
+                if (style.btnType === 'button') {
+                    button = <EditorButton
+                        key={style.type}
+                        type={style.type}
+                        icon={style.icon}
+                        fn={onBlockStyleClick}
+                    />;
+                }
 
                 if (style.btnType === 'select') {
                     button = <EditorDropdown
-                        options={fontSizes.sizes}
-                        fn={selectFn}
+                        key={style.type}
+                        options={headers}
+                        fn={onBlockStyleClick}
+                        type={style.type}
+                        default='headerone'
                     />;
                 }
 

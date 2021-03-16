@@ -9,8 +9,8 @@ interface PropTypes {
     color?: string;
     hasMenu?: boolean;
     fn: any;
-    showValue: boolean;
-    showButton: (type: string) => void;
+    showValue?: boolean;
+    showButton?: (type: string) => void;
 }
 
 const EditorButton = (props: PropTypes) => {
@@ -21,18 +21,22 @@ const EditorButton = (props: PropTypes) => {
 
     let button = (
         <button
-            key={props.type}
             className={[classes.InlineButton, `fas fa-${props.icon}`].join(' ')}
             onMouseDown={clickHandler}
+            aria-label={props.type.toLowerCase()}
         ></button>
     );
 
     if (props.hasMenu) {
         button = (
-            <div key={props.type}>
+            <div>
                 {button}
-                <button key={`${props.type}-SUB`} onMouseDown={() => props.showButton(props.type)} className={classes.InlineSubButton}><div></div></button>
-                {props.showValue ? <ColorContainer type={props.type} changeColor={props.fn} showButton={props.showButton} /> : null}
+                <button
+                    onMouseDown={() => props.showButton!(props.type)}
+                    className={classes.InlineSubButton}
+                    aria-label='Dropdown'
+                ><div></div></button>
+                {props.showValue ? <ColorContainer type={props.type} changeColor={props.fn} showButton={props.showButton!} /> : null}
             </div>
         );
     }

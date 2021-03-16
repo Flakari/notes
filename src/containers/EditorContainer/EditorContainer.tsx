@@ -4,7 +4,6 @@ import { convertToRaw, convertFromRaw, Editor, EditorState, RichUtils } from 'dr
 import classes from './EditorContainer.module.css';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import NoteTitle from '../NoteTitle/NoteTitle';
 import colorData from '../../colors.json';
 import fontSizes from '../../font-sizes.json';
 import EditorButtonContainer from '../EditorButtonContainer/EditorButtonContainer';
@@ -105,7 +104,6 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
 
     return (
         <div>
-            <NoteTitle id={id} saveTitle={saveTitle} />
             <EditorButtonContainer
                 editorState={editorState}
                 setEditorState={setEditorState}

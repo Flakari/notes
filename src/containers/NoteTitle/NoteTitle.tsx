@@ -1,21 +1,18 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import classes from './NoteTitle.module.css';
 import { State } from '../../store/reducer';
 
-interface PropTypes {
-    id: string;
-    saveTitle: (id: string, title: string) => {};
-};
-
-const NoteTitle = (props: PropTypes) => {
-    const title = useSelector((state: State) => state.notes.filter(item => item.id === props.id)[0].title);
+const NoteTitle = () => {
+    const currentId = useSelector((state: State) => state.currentNoteId);
+    const title = useSelector((state: State) => state.notes.filter(item => item.id === currentId)[0].title);
+    const dispatch = useDispatch();
     const [titleValue, setTitleValue] = useState(title || 'Untitled');
 
     const titleChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTitleValue(e.target.value);
-        props.saveTitle(props.id, e.target.value);
+        dispatch({ type: 'SAVE_TITLE', id: currentId, title: e.target.value });
     };
 
     return (
