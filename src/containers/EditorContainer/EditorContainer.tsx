@@ -103,7 +103,7 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
     };
 
     return (
-        <div>
+        <div id={classes.MainContainer}>
             <EditorButtonContainer
                 editorState={editorState}
                 setEditorState={setEditorState}

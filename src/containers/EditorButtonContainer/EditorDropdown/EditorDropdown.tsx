@@ -1,3 +1,5 @@
+import { useState, ChangeEvent } from 'react';
+
 interface PropTypes {
     options: any[];
     fn: any;
@@ -6,8 +8,14 @@ interface PropTypes {
 }
 
 const EditorDropdown = (props: PropTypes) => {
+    const [value, setValue] = useState(props.default);
+
+    const setSelectValue = (e: ChangeEvent<HTMLSelectElement>) => {
+        setValue(e.target.value);
+    };
+
     return (
-        <select aria-label={props.type.toLowerCase()} value={props.default}>
+        <select aria-label={props.type.toLowerCase()} value={value} onChange={setSelectValue}>
             {props.options.map(selectOption => {
                 return <option
                     key={selectOption}

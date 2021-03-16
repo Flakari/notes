@@ -6,7 +6,6 @@ import { Note } from '../../store/reducer';
 import classes from './NotesContainer.module.css';
 
 interface PropTypes {
-    addNote: () => {};
     showNote: (id: string) => {};
     deleteNote: (id: string) => {};
     notes: Note[];
@@ -27,7 +26,6 @@ const NotesContainer = (props: PropTypes) => {
 
     return (
         <div>
-            <button onClick={props.addNote}>Create Note</button>
             <button onClick={containerToggle}>Expand Container</button>
             <div className={[classes.noteContainer, showFull ? classes.expanded : classes.collapsed].join(' ')}>
                 <ul>
@@ -54,7 +52,6 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
-        addNote: () => dispatch({ type: 'CREATE_NOTE' }),
         showNote: (id: string) => dispatch({ type: 'SHOW_NOTE', id }),
         deleteNote: (id: string) => dispatch({ type: 'DELETE_NOTE', id })
     }
