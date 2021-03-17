@@ -2,11 +2,11 @@
     box-sizing: border-box;
     background: white;
     border: 1px solid black;
-    width: 80%;
+    width: 70%;
     margin: 0 auto;
     padding: 20px;
 }
 
 #MainContainer {
-    margin-top: 40px;
+    margin-top: 120px;
 }

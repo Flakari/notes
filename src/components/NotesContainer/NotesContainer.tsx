@@ -25,9 +25,8 @@ const NotesContainer = (props: PropTypes) => {
     };
 
     return (
-        <div>
-            <button onClick={containerToggle}>Expand Container</button>
-            <div className={[classes.noteContainer, showFull ? classes.expanded : classes.collapsed].join(' ')}>
+        <div id={classes.MenuContainer}>
+            <div className={[classes.NoteContainer, showFull ? classes.expanded : classes.collapsed].join(' ')}>
                 <ul>
                     {props.notes.filter(item => item.id !== props.currentNoteId).map(item => {
                         return (
@@ -39,6 +38,7 @@ const NotesContainer = (props: PropTypes) => {
                     })}
                 </ul>
             </div>
+            <div id={classes.MenuToggle} onClick={containerToggle} aria-label={!showFull ? 'Expand Menu' : 'Collapse Menu'}></div>
         </div>
     );
 };

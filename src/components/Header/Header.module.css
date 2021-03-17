@@ -1,3 +1,31 @@
 #MainHeader {
+    background-color: white;
     height: 75px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    display: flex;
+    align-items: center;
+    z-index: 11;
+}
+
+#MainHeader > p {
+    margin: 0 auto;
+}
+
+#CreateNote {
+    position: absolute;
+    background-color: #ff1654;
+    color: white;
+    font-size: 0.9em;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    height: 40px;
+    width: 105px;
+    right: 100px;
+}
+
+#CreateNote:hover {
+    background-color: #dd003b;
 }

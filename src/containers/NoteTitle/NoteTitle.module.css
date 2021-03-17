@@ -1,8 +1,10 @@
 #TitleInput {
     font-size: 2em;
-    text-align: center;
     border: none;
     display: block;
+}
+
+#TitleInputContainer {
+    width: 70%;
     margin: 0 auto;
-    margin-bottom: 15px;
 }

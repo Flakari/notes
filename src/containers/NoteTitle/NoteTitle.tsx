@@ -16,7 +16,9 @@ const NoteTitle = () => {
     };
 
     return (
-        <input id={classes.TitleInput} type="text" value={titleValue} onChange={titleChangeHandler} placeholder='Untitled' />
+        <div id={classes.TitleInputContainer}>
+            <input id={classes.TitleInput} type="text" value={titleValue} onChange={titleChangeHandler} placeholder='Untitled' />
+        </div>
     );
 };
 
