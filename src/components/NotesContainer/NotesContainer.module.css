@@ -17,21 +17,24 @@
 
 #MenuToggle:hover {
     background-color: #f3f3f3;
+    transition: transform 0.5s ease-in;
+}
+
+#MenuToggle.expanded {
+    transform: translateY(300px);
+}
+
+#MenuToggle.collapsed {
+    transform: translateY(0);
 }
 
 .NoteContainer {
     width: 100%;
     position: absolute;
-    z-index: 10;
+    z-index: 11;
     height: 300px;
     background-color: grey;
-    top: 150px
-}
-
-.expanded {
-    display: block;
-}
-
-.collapsed {
-    display: none;
+    top: -225px;
+    transition: transform 0.5s ease-in;
+    box-shadow: inset 0px 2px 4px #00000040;
 }

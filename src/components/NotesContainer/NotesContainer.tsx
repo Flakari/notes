@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -14,6 +14,29 @@ interface PropTypes {
 
 const NotesContainer = (props: PropTypes) => {
     const [showFull, setShowFull] = useState(false);
+    const [hideContainer, setHideContainer] = useState(true);
+    const [transitionStyle, setTransitionStyle] = useState({
+        transform: 'translateY(0)'
+    });
+
+    useEffect(() => {
+        if (showFull) {
+            setHideContainer(false);
+            setTimeout(() => {
+                setTransitionStyle({
+                    transform: 'translateY(300px)'
+                });
+            }, 10);
+        } else {
+            setTransitionStyle({
+                transform: 'translateY(0)'
+            });
+        }
+    }, [showFull]);
+
+    const transitionHandler = () => {
+        if (!showFull) setHideContainer(true);
+    };
 
     const containerToggle = () => {
         setShowFull(prevState => !prevState);
@@ -26,7 +49,7 @@ const NotesContainer = (props: PropTypes) => {
 
     return (
         <div id={classes.MenuContainer}>
-            <div className={[classes.NoteContainer, showFull ? classes.expanded : classes.collapsed].join(' ')}>
+            {!hideContainer ? <div style={transitionStyle} onTransitionEnd={transitionHandler} className={classes.NoteContainer}>
                 <ul>
                     {props.notes.filter(item => item.id !== props.currentNoteId).map(item => {
                         return (
@@ -37,8 +60,8 @@ const NotesContainer = (props: PropTypes) => {
                         );
                     })}
                 </ul>
-            </div>
-            <div id={classes.MenuToggle} onClick={containerToggle} aria-label={!showFull ? 'Expand Menu' : 'Collapse Menu'}></div>
+            </div> : null}
+            <div id={classes.MenuToggle} className={showFull ? classes.expanded : classes.collapsed} onClick={containerToggle} aria-label={!showFull ? 'Expand Menu' : 'Collapse Menu'}></div>
         </div>
     );
 };
