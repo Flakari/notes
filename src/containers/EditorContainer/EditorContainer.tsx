@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { convertToRaw, convertFromRaw, Editor, EditorState, RichUtils } from 'draft-js';
+import { convertToRaw, convertFromRaw, Editor, EditorState, RichUtils, getDefaultKeyBinding, Modifier } from 'draft-js';
 
 import classes from './EditorContainer.module.css';
 import { Dispatch } from 'redux';
@@ -86,9 +86,32 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
         }
     }, [savingStr]);
 
+    const keyBindingFn = (e: any) => {
+        if (e.key === 'Tab') {
+            const selection = editorState.getSelection();
+            const blockType = editorState.getCurrentContent().getBlockForKey(selection.getStartKey()).getType();
+
+            if (blockType === "unordered-list-item" || blockType === "ordered-list-item") {
+                const newState = RichUtils.onTab(e, editorState, 6);
+                setEditorState(newState);
+            } else {
+                const newState = Modifier.replaceText(editorState.getCurrentContent(), selection, '\t');
+                setEditorState(EditorState.push(editorState, newState, 'insert-characters'));
+            }
+
+            return 'on-tab';
+        }
+
+        return getDefaultKeyBinding(e);
+    };
+
     // Basic function to handle key commands
     const handleKeyCommand = (command: string) => {
         const newState = RichUtils.handleKeyCommand(editorState, command);
+
+        if (command === 'on-tab') {
+            return 'handled';
+        }
 
         if (newState) {
             setEditorState(newState);
@@ -116,6 +139,7 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
                     customStyleMap={styleMap}
                     editorState={editorState}
                     onChange={setEditorState}
+                    keyBindingFn={keyBindingFn}
                 />
             </div>
             <p>{id}</p>
