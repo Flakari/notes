@@ -29,3 +29,14 @@
 #CreateNote:hover {
     background-color: #dd003b;
 }
+
+#TitleContainer {
+    font-size: 2em;
+    text-align: left;
+    width: 70%;
+    margin: 0 auto;
+}
+
+#TitleContainer > p {
+    margin: 0;
+}

@@ -1,10 +1,7 @@
 #TitleInput {
-    font-size: 2em;
+    font-size: 1em;
     border: none;
     display: block;
-}
-
-#TitleInputContainer {
-    width: 70%;
-    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-overflow: ellipsis;
 }

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
+import { Transition } from 'react-transition-group';
 
 import { Note } from '../../store/reducer';
 import classes from './NotesContainer.module.css';
@@ -14,28 +15,19 @@ interface PropTypes {
 
 const NotesContainer = (props: PropTypes) => {
     const [showFull, setShowFull] = useState(false);
-    const [hideContainer, setHideContainer] = useState(true);
-    const [transitionStyle, setTransitionStyle] = useState({
+    const containerRef = useRef(null);
+
+    const duration = 500;
+
+    const transitionStyles: { [id: string]: React.CSSProperties } = {
+        entering: { transform: 'translateY(300px)' },
+        entered: { transform: 'translateY(300px)' },
+        exited: { visibility: 'hidden' }
+    };
+
+    const defaultStyle = {
+        transition: `transform ${duration} ease-in`,
         transform: 'translateY(0)'
-    });
-
-    useEffect(() => {
-        if (showFull) {
-            setHideContainer(false);
-            setTimeout(() => {
-                setTransitionStyle({
-                    transform: 'translateY(300px)'
-                });
-            }, 10);
-        } else {
-            setTransitionStyle({
-                transform: 'translateY(0)'
-            });
-        }
-    }, [showFull]);
-
-    const transitionHandler = () => {
-        if (!showFull) setHideContainer(true);
     };
 
     const containerToggle = () => {
@@ -49,18 +41,20 @@ const NotesContainer = (props: PropTypes) => {
 
     return (
         <div id={classes.MenuContainer}>
-            {!hideContainer ? <div style={transitionStyle} onTransitionEnd={transitionHandler} className={classes.NoteContainer}>
-                <ul>
-                    {props.notes.filter(item => item.id !== props.currentNoteId).map(item => {
-                        return (
-                            <li key={item.id}>
-                                <span onClick={() => itemClickHandler(item.id)}>{item.title || 'Untitled'}</span>
-                                <button className={classes.btn} onClick={() => props.deleteNote(item.id)}>X</button>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </div> : null}
+            <Transition in={showFull} timeout={duration} nodeRef={containerRef}>
+                {(state) => <div style={{ ...defaultStyle, ...transitionStyles[state] }} className={classes.NoteContainer} ref={containerRef}>
+                    <ul>
+                        {props.notes.filter(item => item.id !== props.currentNoteId).map(item => {
+                            return (
+                                <li key={item.id}>
+                                    <span onClick={() => itemClickHandler(item.id)}>{item.title || 'Untitled'}</span>
+                                    <button className={classes.btn} onClick={() => props.deleteNote(item.id)}>X</button>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>}
+            </Transition>
             <div id={classes.MenuToggle} className={showFull ? classes.expanded : classes.collapsed} onClick={containerToggle} aria-label={!showFull ? 'Expand Menu' : 'Collapse Menu'}></div>
         </div>
     );

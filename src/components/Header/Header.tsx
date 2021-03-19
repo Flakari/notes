@@ -14,7 +14,9 @@ export const Header = () => {
 
     return (
         <header id={classes.MainHeader}>
-            {currentNoteId !== '' ? <NoteTitle key={currentNoteId} /> : <p>Notes</p>}
+            <div id={classes.TitleContainer}>
+                {currentNoteId !== '' ? <NoteTitle key={currentNoteId} /> : <p>Notes</p>}
+            </div>
             <button id={classes.CreateNote} onClick={clickHandler}>Create Note</button>
         </header>
     );
