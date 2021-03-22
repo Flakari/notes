@@ -92,7 +92,7 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
             const blockType = editorState.getCurrentContent().getBlockForKey(selection.getStartKey()).getType();
 
             if (blockType === "unordered-list-item" || blockType === "ordered-list-item") {
-                const newState = RichUtils.onTab(e, editorState, 6);
+                const newState = RichUtils.onTab(e, editorState, 4);
                 setEditorState(newState);
             } else {
                 const newState = Modifier.replaceText(editorState.getCurrentContent(), selection, '\t');
