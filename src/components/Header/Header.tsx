@@ -1,11 +1,10 @@
 import classes from './Header.module.css';
-import { State } from '../../store/reducer';
 import { useDispatch, useSelector } from 'react-redux';
 
 import NoteTitle from '../../containers/NoteTitle/NoteTitle'
 
 export const Header = () => {
-    const currentNoteId = useSelector((state: State) => state.currentNoteId);
+    const currentNoteId = useSelector((state: any) => state.note.currentNoteId);
     const dispatch = useDispatch();
 
     const clickHandler = () => {

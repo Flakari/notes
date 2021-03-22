@@ -24,8 +24,8 @@ function App(props: PropTypes) {
 
 const mapStateToProps = (state: any) => {
 	return {
-		currentNoteId: state.currentNoteId,
-		showEditor: state.showEditor
+		currentNoteId: state.note.currentNoteId,
+		showEditor: state.note.showEditor
 	};
 };
 

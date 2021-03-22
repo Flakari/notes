@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import classes from './NoteBoard.module.css';
 import Note from './Note/Note';
@@ -20,19 +20,13 @@ const NoteBoard = () => {
 
     const setWidthState = (amount: number) => {
         setWidth(amount);
+        setStyle({ ...style, width: amount });
     };
 
     const setHeightState = (amount: number) => {
         setHeight(amount);
+        setStyle({ ...style, height: amount });
     };
-
-    useEffect(() => {
-        setStyle({ ...style, width });
-    }, [width]);
-
-    useEffect(() => {
-        setStyle({ ...style, height });
-    }, [height]);
 
     return (
         <div id={classes.NoteBoard} style={style}>

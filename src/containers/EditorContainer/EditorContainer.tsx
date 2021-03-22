@@ -149,7 +149,7 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
 };
 
 const mapStateToProps = (state: any, ownProps: any) => {
-    const noteInfo = state.notes.filter((item: any) => item.id === ownProps.id)[0];
+    const noteInfo = state.note.notes.filter((item: any) => item.id === ownProps.id)[0];
     return {
         content: noteInfo?.content
     };

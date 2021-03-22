@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import classes from "./Note.module.css";
 
@@ -29,28 +29,15 @@ const Note = (props: PropTypes) => {
         props.setDraggingState(true);
         setFocus(true);
         setStyle({ ...style, cursor: 'grabbing' });
-
-        if (zIndex === props.zIndex) return;
-        setZIndex(props.zIndex + 1);
-        props.setZIndex(zIndex);
+        zIndexHandler();
     };
 
-    useEffect(() => {
-        setStyle({ ...style, zIndex });
-    }, [zIndex]);
-
-    useEffect(() => {
-        if (right >= props.containerWidth - 20) {
-            props.setContainerWidth(right + 20);
-        }
-    }, [right]);
-
-    useEffect(() => {
-        // Use -20 for margin due to 40px height of header
-        if (bottom >= props.containerHeight - 20) {
-            props.setContainerHeight(bottom - 20);
-        }
-    }, [bottom]);
+    const zIndexHandler = () => {
+        if (zIndex === props.zIndex) return;
+        setZIndex(props.zIndex + 1);
+        setStyle({ ...style, zIndex: props.zIndex + 1 });
+        props.setZIndex(zIndex);
+    };
 
     const onDrag = (e: any) => {
         if (props.dragging && focus) {
@@ -66,11 +53,22 @@ const Note = (props: PropTypes) => {
     };
 
     const dragEnd = (e: any) => {
+        let right = e.currentTarget.getBoundingClientRect().right + window.scrollX;
+        let bottom = e.currentTarget.getBoundingClientRect().bottom + window.scrollY
+
         setFocus(false);
         props.setDraggingState(false);
         setStyle({ ...style, cursor: 'grab' });
-        setRight(e.currentTarget.getBoundingClientRect().right + window.scrollX);
-        setBottom(e.currentTarget.getBoundingClientRect().bottom + window.scrollY);
+        setRight(right);
+        setBottom(bottom);
+
+        if (bottom >= props.containerHeight - 20) {
+            props.setContainerHeight(bottom - 20);
+        }
+
+        if (right >= props.containerWidth - 20) {
+            props.setContainerWidth(right + 20);
+        }
     };
 
     return (

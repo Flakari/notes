@@ -1,12 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import classes from './NoteTitle.module.css';
-import { State } from '../../store/reducer';
+import CombinedState from '../../store/combinedState';
 
 const NoteTitle = () => {
-    const currentId = useSelector((state: State) => state.currentNoteId);
-    const title = useSelector((state: State) => state.notes.filter(item => item.id === currentId)[0].title);
+    const currentId = useSelector((state: CombinedState) => state.note.currentNoteId);
+    const title = useSelector((state: CombinedState) => state.note.notes.filter((item: any) => item.id === currentId)[0].title);
     const dispatch = useDispatch();
     const [titleValue, setTitleValue] = useState(title || 'Untitled');
     const inputRef = useRef<HTMLInputElement>(null);

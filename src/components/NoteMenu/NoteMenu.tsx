@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import { Note } from '../../store/reducer';
+import { Note } from '../../store/noteReducer';
 import classes from './NoteMenu.module.css';
 
 interface PropTypes {
@@ -37,8 +37,8 @@ const NotesContainer = (props: PropTypes) => {
 
 const mapStateToProps = (state: any) => {
     return {
-        notes: state.notes,
-        currentNoteId: state.currentNoteId
+        notes: state.note.notes,
+        currentNoteId: state.note.currentNoteId
     }
 }
 

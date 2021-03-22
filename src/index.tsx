@@ -3,11 +3,17 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import reducer from './store/reducer';
-import { createStore } from 'redux';
+import noteReducer from './store/noteReducer';
+import boardReducer from './store/boardReducer';
+import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 
-const store = createStore(reducer, (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__());
+const rootReducer = combineReducers({
+  note: noteReducer,
+  board: boardReducer
+});
+
+const store = createStore(rootReducer, (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__());
 
 ReactDOM.render(
   <Provider store={store}>

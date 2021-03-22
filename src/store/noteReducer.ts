@@ -45,7 +45,7 @@ const deleteNote = (state: State, id: string) => {
 }
 
 // {} on save actions to block scope newNote variable
-const reducer = (state = initialState, action: AnyAction) => {
+const noteReducer = (state = initialState, action: AnyAction) => {
     switch (action.type) {
         case 'CREATE_NOTE':
             return {
@@ -70,9 +70,11 @@ const reducer = (state = initialState, action: AnyAction) => {
         }
         case 'SHOW_NOTE':
             return { ...state, currentNoteId: action.id, showEditor: true };
+        case 'HIDE_NOTE':
+            return { ...state, currentNoteId: '', showEditor: false };
         default:
             return state;
     }
 };
 
-export default reducer;
+export default noteReducer;
