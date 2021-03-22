@@ -2,6 +2,7 @@ import './App.css';
 import Header from './components/Header/Header';
 import EditorContainer from './containers/EditorContainer/EditorContainer';
 import MenuContainer from './components/MenuContainer/MenuContainer';
+import NoteBoard from './containers/NoteBoard/NoteBoard';
 
 import { connect } from 'react-redux';
 
@@ -16,6 +17,7 @@ function App(props: PropTypes) {
 			<Header />
 			<MenuContainer />
 			{(props.showEditor && props.currentNoteId !== '') && <EditorContainer key={props.currentNoteId} id={props.currentNoteId} />}
+			<NoteBoard />
 		</div>
 	);
 }

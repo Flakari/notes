@@ -38,7 +38,7 @@ const MenuContainer = () => {
 
     const props = {
         containerToggle
-    }
+    };
 
     return (
         <>
@@ -49,7 +49,7 @@ const MenuContainer = () => {
                             <button onClick={showNotes}>Notes</button>
                             <button onClick={showBoard}>Board</button>
                         </div>
-                        {showNotesMenu ? <NoteMenu props={props} /> : <BoardMenu />}
+                        {showNotesMenu ? <NoteMenu props={props} /> : <BoardMenu props={props} />}
                     </div>
                 )}
             </Transition>

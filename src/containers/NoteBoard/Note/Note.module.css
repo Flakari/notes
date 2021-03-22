@@ -1,0 +1,7 @@
+.Note {
+    height: 240px;
+    width: 220px;
+    background-color: white;
+    position: absolute;
+    cursor: grab;
+}
