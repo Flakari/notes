@@ -1,8 +1,8 @@
-import { State as NoteState } from './noteReducer';
+import { State as PageState } from './pageReducer';
 import { State as BoardState } from './boardReducer';
 
 interface CombinedState {
-    note: NoteState;
+    page: PageState;
     board: BoardState;
 }
 

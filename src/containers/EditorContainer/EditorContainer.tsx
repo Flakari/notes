@@ -36,6 +36,7 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
     // Flags if container component has just been loaded, only changes to false when editor gets used
     const [appStart, setAppStart] = useState(true);
     const [savingStr, setSavingStr] = useState(false);
+    const editorRef = useRef<Editor>(null);
 
     const styleMap = {
         'STRIKETHROUGH': {
@@ -125,6 +126,12 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
         if (appStart) setAppStart(false);
     };
 
+    const focusEditor = () => {
+        if (editorRef.current) {
+            editorRef.current.focus();
+        }
+    };
+
     return (
         <div id={classes.MainContainer}>
             <EditorButtonContainer
@@ -133,8 +140,9 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
                 contentState={contentState}
                 removeComponentLoadedState={removeComponentLoadedState}
             />
-            <div ref={editorContainerRef} className={classes.EditorContainer}>
+            <div ref={editorContainerRef} className={classes.EditorContainer} onClick={focusEditor}>
                 <Editor
+                    ref={editorRef}
                     handleKeyCommand={handleKeyCommand}
                     customStyleMap={styleMap}
                     editorState={editorState}
@@ -149,16 +157,16 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
 };
 
 const mapStateToProps = (state: any, ownProps: any) => {
-    const noteInfo = state.note.notes.filter((item: any) => item.id === ownProps.id)[0];
+    const pageInfo = state.page.pages.filter((item: any) => item.id === ownProps.id)[0];
     return {
-        content: noteInfo?.content
+        content: pageInfo?.content
     };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
-        saveNote: (id: string, content: string) => dispatch({ type: 'SAVE_NOTE', id, content }),
-        saveTitle: (id: string, title: string) => dispatch({ type: 'SAVE_TITLE', id, title })
+        saveNote: (id: string, content: string) => dispatch({ type: 'SAVE_PAGE', id, content }),
+        saveTitle: (id: string, title: string) => dispatch({ type: 'SAVE_PAGE_TITLE', id, title })
     };
 };
 

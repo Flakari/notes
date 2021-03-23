@@ -7,7 +7,7 @@ import NoteBoard from './containers/NoteBoard/NoteBoard';
 import { connect } from 'react-redux';
 
 interface PropTypes {
-	currentNoteId: string;
+	currentPageId: string;
 	showEditor: boolean;
 };
 
@@ -16,7 +16,7 @@ function App(props: PropTypes) {
 		<div className="App">
 			<Header />
 			<MenuContainer />
-			{(props.showEditor && props.currentNoteId !== '') && <EditorContainer key={props.currentNoteId} id={props.currentNoteId} />}
+			{(props.showEditor && props.currentPageId !== '') && <EditorContainer key={props.currentPageId} id={props.currentPageId} />}
 			<NoteBoard />
 		</div>
 	);
@@ -24,8 +24,8 @@ function App(props: PropTypes) {
 
 const mapStateToProps = (state: any) => {
 	return {
-		currentNoteId: state.note.currentNoteId,
-		showEditor: state.note.showEditor
+		currentPageId: state.page.currentPageId,
+		showEditor: state.page.showEditor
 	};
 };
 

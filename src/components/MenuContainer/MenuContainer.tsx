@@ -1,20 +1,20 @@
 import { useState, useRef } from 'react';
 import { Transition } from 'react-transition-group';
 
-import NoteMenu from '../NoteMenu/NoteMenu';
+import PageMenu from '../PageMenu/PageMenu';
 import BoardMenu from '../BoardMenu/BoardMenu';
 import classes from './MenuContainer.module.css';
 
 const MenuContainer = () => {
-    const [showNotesMenu, setShowNotesMenu] = useState(true);
+    const [showPagesMenu, setShowPagesMenu] = useState(true);
     const [showFull, setShowFull] = useState(false);
 
-    const showNotes = () => {
-        setShowNotesMenu(true);
+    const showPages = () => {
+        setShowPagesMenu(true);
     };
 
     const showBoard = () => {
-        setShowNotesMenu(false);
+        setShowPagesMenu(false);
     };
 
     const containerRef = useRef(null);
@@ -46,10 +46,10 @@ const MenuContainer = () => {
                 {(state) => (
                     <div style={{ ...defaultStyle, ...transitionStyles[state] }} id={classes.MenuContainer} ref={containerRef}>
                         <div id={classes.MenuButtonContainer}>
-                            <button onClick={showNotes}>Notes</button>
+                            <button onClick={showPages}>Pages</button>
                             <button onClick={showBoard}>Board</button>
                         </div>
-                        {showNotesMenu ? <NoteMenu props={props} /> : <BoardMenu props={props} />}
+                        {showPagesMenu ? <PageMenu props={props} /> : <BoardMenu props={props} />}
                     </div>
                 )}
             </Transition>

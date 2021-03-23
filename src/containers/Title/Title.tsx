@@ -1,19 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import classes from './NoteTitle.module.css';
+import classes from './Title.module.css';
 import CombinedState from '../../store/combinedState';
 
-const NoteTitle = () => {
-    const currentId = useSelector((state: CombinedState) => state.note.currentNoteId);
-    const title = useSelector((state: CombinedState) => state.note.notes.filter((item: any) => item.id === currentId)[0].title);
+const Title = () => {
+    const currentId = useSelector((state: CombinedState) => state.page.currentPageId);
+    const title = useSelector((state: CombinedState) => state.page.pages.filter((item: any) => item.id === currentId)[0].title);
     const dispatch = useDispatch();
     const [titleValue, setTitleValue] = useState(title || 'Untitled');
     const inputRef = useRef<HTMLInputElement>(null);
 
     const titleChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTitleValue(e.target.value);
-        dispatch({ type: 'SAVE_TITLE', id: currentId, title: e.target.value });
+        dispatch({ type: 'SAVE_PAGE_TITLE', id: currentId, title: e.target.value });
     };
 
     const blurHandler = () => {
@@ -25,4 +25,4 @@ const NoteTitle = () => {
     );
 };
 
-export default NoteTitle;
+export default Title;

@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import noteReducer from './store/noteReducer';
+import pageReducer from './store/pageReducer';
 import boardReducer from './store/boardReducer';
 import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 
 const rootReducer = combineReducers({
-  note: noteReducer,
+  page: pageReducer,
   board: boardReducer
 });
 
