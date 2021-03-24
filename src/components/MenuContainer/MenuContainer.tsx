@@ -55,7 +55,6 @@ const MenuContainer = () => {
             </Transition>
             <div id={classes.MenuToggle} className={showFull ? classes.expanded : classes.collapsed} onClick={containerToggle} aria-label={!showFull ? 'Expand Menu' : 'Collapse Menu'}></div>
         </>
-
     );
 };
 

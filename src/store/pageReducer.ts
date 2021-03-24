@@ -61,9 +61,8 @@ const pageReducer = (state = initialState, action: AnyAction) => {
             updateLocalStorage('pages', newPages);
             return {
                 ...state,
-                pages: newPages,
-                showEditor: true
-            }
+                pages: newPages
+            };
         case 'SAVE_PAGE':
             return updatePages(state, savePage, [action.id, null, action.content]);
         case 'SAVE_PAGE_TITLE':

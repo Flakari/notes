@@ -9,6 +9,8 @@ import { connect } from 'react-redux';
 interface PropTypes {
 	currentPageId: string;
 	showEditor: boolean;
+	currentBoardId: string;
+	showBoard: boolean;
 };
 
 function App(props: PropTypes) {
@@ -17,7 +19,7 @@ function App(props: PropTypes) {
 			<Header />
 			<MenuContainer />
 			{(props.showEditor && props.currentPageId !== '') && <EditorContainer key={props.currentPageId} id={props.currentPageId} />}
-			<NoteBoard />
+			{(props.showBoard && props.currentBoardId !== '') && <NoteBoard key={props.currentBoardId} id={props.currentBoardId} />}
 		</div>
 	);
 }
@@ -25,7 +27,9 @@ function App(props: PropTypes) {
 const mapStateToProps = (state: any) => {
 	return {
 		currentPageId: state.page.currentPageId,
-		showEditor: state.page.showEditor
+		showEditor: state.page.showEditor,
+		showBoard: state.board.showBoard,
+		currentBoardId: state.board.currentBoardId
 	};
 };
 

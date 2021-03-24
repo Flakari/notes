@@ -3,4 +3,5 @@
     box-sizing: border-box;
     top: 105px;
     background-color: #d6d4bc;
+    z-index: 1;
 }

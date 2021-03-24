@@ -10,11 +10,13 @@ interface PropTypes {
     deletePage: (id: string) => {};
     pages: Page[];
     currentPageId: string;
+    hideBoard: () => {};
 }
 
 const PageMenu = (props: PropTypes) => {
     const itemClickHandler = (id: string) => {
         props.showPage(id);
+        props.hideBoard();
         props.props.containerToggle();
     };
 
@@ -45,7 +47,8 @@ const mapStateToProps = (state: any) => {
 const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
         showPage: (id: string) => dispatch({ type: 'SHOW_PAGE', id }),
-        deletePage: (id: string) => dispatch({ type: 'DELETE_PAGE', id })
+        deletePage: (id: string) => dispatch({ type: 'DELETE_PAGE', id }),
+        hideBoard: () => dispatch({ type: 'HIDE_BOARD' })
     }
 };
 
