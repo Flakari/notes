@@ -44,6 +44,9 @@ const NoteBoard = (props: PropTypes) => {
                 return (
                     <Note
                         key={notes[item].id}
+                        id={notes[item].id}
+                        left={notes[item].left}
+                        top={notes[item].top}
                         dragging={dragging}
                         setDraggingState={setDraggingState}
                         zIndex={zIndex}

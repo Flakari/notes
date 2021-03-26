@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import classes from "./Note.module.css";
 
@@ -11,6 +12,9 @@ interface PropTypes {
     setContainerWidth: (width: number) => void;
     setContainerHeight: (height: number) => void;
     dragging: boolean;
+    id: string;
+    top: number;
+    left: number;
 }
 
 const Note = (props: PropTypes) => {
@@ -20,7 +24,8 @@ const Note = (props: PropTypes) => {
     const [bottom, setBottom] = useState(0);
     const [focus, setFocus] = useState(false);
     const [zIndex, setZIndex] = useState(0);
-    const [style, setStyle] = useState({ zIndex, top: 20, left: 20, cursor: 'grab' });
+    const [style, setStyle] = useState({ zIndex, top: props.top || 20, left: props.left || 20, cursor: 'grab' });
+    const dispatch = useDispatch();
 
     const dragStart = (e: any) => {
         setDiffX(e.screenX - e.currentTarget.getBoundingClientRect().left);
@@ -69,6 +74,8 @@ const Note = (props: PropTypes) => {
         if (right >= props.containerWidth - 20) {
             props.setContainerWidth(right + 20);
         }
+        const position = { left: style.left, top: style.top, right, bottom };
+        dispatch({ type: 'UPDATE_NOTE_POSITION', noteId: props.id, position });
     };
 
     return (
