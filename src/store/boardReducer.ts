@@ -81,7 +81,7 @@ const noteReducer = (state = initialState, action: AnyAction) => {
                 ...state,
                 boards: tempBoardsState
             };
-        case 'UPDATE_NOTE_POSITION':
+        case 'UPDATE_NOTE_POSITION': {
             const note = { ...state.boards[state.currentBoardId].notes[action.noteId], ...action.position };
             const updatedBoard = updateNote(state, action.noteId, note);
             updateLocalStorage('boards', updatedBoard);
@@ -90,6 +90,18 @@ const noteReducer = (state = initialState, action: AnyAction) => {
                 ...state,
                 boards: updatedBoard
             };
+        }
+        case 'SAVE_NOTE_CONTENT': {
+            const note = { ...state.boards[state.currentBoardId].notes[action.noteId], content: action.content };
+            const updatedBoard = updateNote(state, action.noteId, note);
+
+            updateLocalStorage('boards', updatedBoard);
+
+            return {
+                ...state,
+                boards: updatedBoard
+            };
+        }
         default:
             return state;
     }

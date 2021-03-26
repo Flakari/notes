@@ -1,9 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { convertToRaw, convertFromRaw, Editor, EditorState, RichUtils, getDefaultKeyBinding, Modifier } from 'draft-js';
-
-import classes from './EditorContainer.module.css';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
 import colorData from '../../colors.json';
 import fontSizes from '../../font-sizes.json';
 import EditorButtonContainer from '../EditorButtonContainer/EditorButtonContainer';
@@ -11,9 +7,10 @@ import 'draft-js/dist/Draft.css';
 
 interface PropTypes {
     id: string;
-    saveNote: (id: string, content: string) => {};
-    saveTitle: (id: string, title: string) => {};
+    saveNote: (id: string, content: string) => void;
     content: string;
+    editorButtonClass: string;
+    editorClass: string;
 }
 
 const textColorMap: { [key: string]: {} } = {};
@@ -29,7 +26,7 @@ for (let item of fontSizes.sizes) {
     fontSizeMap[`${item}-FONTSIZE`] = { fontSize: item };
 }
 
-const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
+const EditorContainer = ({ id, saveNote, content, editorButtonClass, editorClass }: PropTypes) => {
     const [editorState, setEditorState] = useState(content ? () => EditorState.createWithContent(convertFromRaw(JSON.parse(content))) : () => EditorState.createEmpty());
     const contentState = editorState.getCurrentContent();
     const editorContainerRef = useRef<HTMLDivElement>(null);
@@ -133,14 +130,15 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
     };
 
     return (
-        <div id={classes.MainContainer}>
+        <>
             <EditorButtonContainer
                 editorState={editorState}
                 setEditorState={setEditorState}
                 contentState={contentState}
                 removeComponentLoadedState={removeComponentLoadedState}
+                editorButtonClass={editorButtonClass}
             />
-            <div ref={editorContainerRef} className={classes.EditorContainer} onClick={focusEditor}>
+            <div ref={editorContainerRef} className={editorClass} onClick={focusEditor}>
                 <Editor
                     ref={editorRef}
                     handleKeyCommand={handleKeyCommand}
@@ -150,24 +148,8 @@ const EditorContainer = ({ id, saveNote, saveTitle, content }: PropTypes) => {
                     keyBindingFn={keyBindingFn}
                 />
             </div>
-            <p>{id}</p>
-            {savingStr ? <p>Saved!</p> : null}
-        </div>
+        </>
     );
 };
 
-const mapStateToProps = (state: any, ownProps: any) => {
-    const pageInfo = state.page.pages.filter((item: any) => item.id === ownProps.id)[0];
-    return {
-        content: pageInfo?.content
-    };
-};
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-    return {
-        saveNote: (id: string, content: string) => dispatch({ type: 'SAVE_PAGE', id, content }),
-        saveTitle: (id: string, title: string) => dispatch({ type: 'SAVE_PAGE_TITLE', id, title })
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditorContainer);
+export default EditorContainer;

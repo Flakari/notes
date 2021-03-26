@@ -1,7 +1,13 @@
 .Note {
-    height: 240px;
-    width: 220px;
+    min-height: 240px;
+    min-width: 220px;
+    max-width: 500px;
     background-color: white;
     position: absolute;
     cursor: grab;
+}
+
+.NoteButtonContainer {
+    position: absolute;
+    top: -50px;
 }

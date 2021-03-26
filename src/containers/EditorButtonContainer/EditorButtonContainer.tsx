@@ -12,6 +12,7 @@ interface PropTypes {
     setEditorState: React.Dispatch<React.SetStateAction<EditorState>>;
     contentState: any;
     removeComponentLoadedState: () => void;
+    editorButtonClass: string;
 }
 
 const textColorArr: string[] = [];
@@ -152,7 +153,7 @@ const EditorButtonContainer = (props: PropTypes) => {
     };
 
     return (
-        <div className={classes.ButtonContainer}>
+        <div className={[classes.ButtonContainer, props.editorButtonClass].join(' ')}>
             {inlineStyles.map(style => {
                 const fn = 'color' in style ? colorChange :
                     style.type === 'SUPERSCRIPT' || style.type === 'SUBSCRIPT' ? changeScriptAlignment : onInlineStyleClick;

@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import EditorContainer from '../../EditorContainer/EditorContainer';
 
 import classes from "./Note.module.css";
+import State from '../../../store/combinedState';
 
 interface PropTypes {
     setDraggingState: (state: boolean) => void;
@@ -18,6 +20,8 @@ interface PropTypes {
 }
 
 const Note = (props: PropTypes) => {
+    const boardId = useSelector((state: State) => state.board.currentBoardId);
+    const content = useSelector((state: State) => state.board.boards[boardId].notes[props.id].content);
     const [diffX, setDiffX] = useState(0);
     const [diffY, setDiffY] = useState(0);
     const [right, setRight] = useState(0);
@@ -78,6 +82,10 @@ const Note = (props: PropTypes) => {
         dispatch({ type: 'UPDATE_NOTE_POSITION', noteId: props.id, position });
     };
 
+    const saveNote = useCallback((id: string, content: string) => {
+        dispatch({ type: 'SAVE_NOTE_CONTENT', noteId: id, content });
+    }, [dispatch]);
+
     return (
         <div
             className={classes.Note}
@@ -85,7 +93,15 @@ const Note = (props: PropTypes) => {
             onMouseDown={dragStart}
             onMouseMove={onDrag}
             onMouseUp={dragEnd}
-        ></div>
+        >
+            <EditorContainer
+                id={props.id}
+                content={content}
+                editorButtonClass={classes.NoteButtonContainer}
+                editorClass={''}
+                saveNote={saveNote}
+            />
+        </div>
     );
 };
 

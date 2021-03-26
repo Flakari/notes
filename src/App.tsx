@@ -1,6 +1,6 @@
 import './App.css';
 import Header from './components/Header/Header';
-import EditorContainer from './containers/EditorContainer/EditorContainer';
+import PageContainer from './containers/PageContainer/PageContainer';
 import MenuContainer from './components/MenuContainer/MenuContainer';
 import NoteBoard from './containers/NoteBoard/NoteBoard';
 
@@ -18,7 +18,7 @@ function App(props: PropTypes) {
 		<div className="App">
 			<Header />
 			<MenuContainer />
-			{(props.showEditor && props.currentPageId !== '') && <EditorContainer key={props.currentPageId} id={props.currentPageId} />}
+			{(props.showEditor && props.currentPageId !== '') && <PageContainer key={props.currentPageId} />}
 			{(props.showBoard && props.currentBoardId !== '') && <NoteBoard key={props.currentBoardId} id={props.currentBoardId} />}
 		</div>
 	);

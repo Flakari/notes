@@ -1,4 +1,4 @@
-.EditorContainer {
+.PageEditorContainer {
     box-sizing: border-box;
     background: white;
     width: 70%;
@@ -10,7 +10,7 @@
     cursor: text;
 }
 
-#MainContainer {
+#PageContainer {
     box-sizing: border-box;
     padding-top: 120px;
     background-color: #ebebeb;
