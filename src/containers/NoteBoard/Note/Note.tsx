@@ -21,7 +21,7 @@ interface PropTypes {
 
 const Note = (props: PropTypes) => {
     const boardId = useSelector((state: State) => state.board.currentBoardId);
-    const content = useSelector((state: State) => state.board.boards[boardId].notes[props.id].content);
+    const note = useSelector((state: State) => state.board.boards[boardId].notes[props.id]);
     const [diffX, setDiffX] = useState(0);
     const [diffY, setDiffY] = useState(0);
     const [right, setRight] = useState(0);
@@ -78,8 +78,11 @@ const Note = (props: PropTypes) => {
         if (right >= props.containerWidth - 20) {
             props.setContainerWidth(right + 20);
         }
-        const position = { left: style.left, top: style.top, right, bottom };
-        dispatch({ type: 'UPDATE_NOTE_POSITION', noteId: props.id, position });
+
+        if (style.left !== note.left || style.top !== note.top || right !== note.right || bottom !== note.bottom) {
+            const position = { left: style.left, top: style.top, right, bottom };
+            dispatch({ type: 'UPDATE_NOTE_POSITION', noteId: props.id, position });
+        }
     };
 
     const saveNote = useCallback((id: string, content: string) => {
@@ -96,7 +99,7 @@ const Note = (props: PropTypes) => {
         >
             <EditorContainer
                 id={props.id}
-                content={content}
+                content={note.content}
                 editorButtonClass={classes.NoteButtonContainer}
                 editorClass={''}
                 saveNote={saveNote}
