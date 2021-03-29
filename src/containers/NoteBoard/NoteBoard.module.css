@@ -19,4 +19,5 @@
     display: flex;
     place-content: center;
     font-weight: 800;
+    z-index: 2147483647; /* Maximum z-index */
 }

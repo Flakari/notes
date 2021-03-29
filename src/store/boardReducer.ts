@@ -10,6 +10,7 @@ export interface Note {
     top: number;
     right: number;
     bottom: number;
+    zIndex: number;
 }
 
 interface Board {
@@ -18,6 +19,7 @@ interface Board {
     id: string;
     width: number;
     height: number;
+    maxZIndex: number;
 }
 
 export interface State {
@@ -53,7 +55,7 @@ const boardReducer = (state = initialState, action: AnyAction) => {
             if (Object.keys(state.boards).length >= 2) return state;
             const id = v4();
             const newBoards = { ...state.boards }
-            newBoards[id] = { title: '', notes: {}, id, width: 0, height: 0 };
+            newBoards[id] = { title: '', notes: {}, id, width: 0, height: 0, maxZIndex: 1 };
             updateLocalStorage('boards', newBoards);
             return {
                 ...state,
@@ -89,9 +91,15 @@ const noteReducer = (state = initialState, action: AnyAction) => {
     switch (action.type) {
         case 'CREATE_NOTE':
             const id = v4();
-            const tempBoardsState = { ...state.boards };
-            const notes = tempBoardsState[action.boardId].notes;
-            notes[id] = { id, content: '', left: 0, top: 0, right: 0, bottom: 0 };
+            const tempBoardsState = {
+                ...state.boards,
+                [state.currentBoardId]: {
+                    ...state.boards[state.currentBoardId],
+                    maxZIndex: state.boards[state.currentBoardId].maxZIndex + 1
+                }
+            };
+            const notes = tempBoardsState[state.currentBoardId].notes;
+            notes[id] = { id, content: '', left: 0, top: 0, right: 0, bottom: 0, zIndex: state.boards[state.currentBoardId].maxZIndex + 1 };
             updateLocalStorage('boards', tempBoardsState);
 
             return {
@@ -106,6 +114,23 @@ const noteReducer = (state = initialState, action: AnyAction) => {
             return {
                 ...state,
                 boards: updatedBoard
+            };
+        }
+        case 'UPDATE_NOTE_ZINDEX': {
+            const note = { ...state.boards[state.currentBoardId].notes[action.noteId], zIndex: action.zIndex };
+            const updatedBoard = updateNote(state, action.noteId, note);
+            const updatedBoardZIndex = {
+                ...updatedBoard,
+                [state.currentBoardId]: {
+                    ...updatedBoard[state.currentBoardId],
+                    maxZIndex: action.zIndex
+                }
+            }
+            updateLocalStorage('boards', updatedBoardZIndex);
+
+            return {
+                ...state,
+                boards: updatedBoardZIndex
             };
         }
         case 'SAVE_NOTE_CONTENT': {

@@ -8,7 +8,6 @@ import State from '../../../store/combinedState';
 interface PropTypes {
     setDraggingState: (state: boolean) => void;
     zIndex: number;
-    setZIndex: (state: number) => void;
     containerWidth: number;
     containerHeight: number;
     setContainerWidth: (width: number) => void;
@@ -27,7 +26,8 @@ const Note = (props: PropTypes) => {
     const [diffX, setDiffX] = useState(0);
     const [diffY, setDiffY] = useState(0);
     const [focus, setFocus] = useState(false);
-    const [zIndex, setZIndex] = useState(0);
+    const zIndex = useSelector(() => note.zIndex)
+    // const [zIndex, setZIndex] = useState(0);
     const [style, setStyle] = useState({ zIndex, top: props.top || 20, left: props.left || 20 });
     const [grabDivStyle, setGrabDivStyle] = useState({ cursor: 'grab' });
     const dispatch = useDispatch();
@@ -54,9 +54,8 @@ const Note = (props: PropTypes) => {
 
     const zIndexHandler = () => {
         if (zIndex === props.zIndex) return;
-        setZIndex(props.zIndex + 1);
+        dispatch({ type: 'UPDATE_NOTE_ZINDEX', noteId: props.id, zIndex: props.zIndex + 1 });
         setStyle({ ...style, zIndex: props.zIndex + 1 });
-        props.setZIndex(zIndex);
     };
 
     const onDrag = (e: any) => {
@@ -124,7 +123,7 @@ const Note = (props: PropTypes) => {
                 editorClass={classes.NoteEditorContainer}
                 saveNote={saveNote}
             />
-            <button onClick={() => dispatch({ type: 'DELETE_NOTE', id: props.id })}>Delete</button>
+            <button onClick={(e: SyntheticEvent) => { dispatch({ type: 'DELETE_NOTE', id: props.id }); e.stopPropagation() }}>Delete</button>
         </div>
     );
 };

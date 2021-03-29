@@ -12,7 +12,7 @@ interface PropTypes {
 
 const NoteBoard = (props: PropTypes) => {
     const [dragging, setDragging] = useState(false);
-    const [zIndex, setZIndex] = useState(1);
+    const zIndex = useSelector((state: State) => state.board.boards[props.id].maxZIndex);
     const [width, setWidth] = useState(window.innerWidth - 1);
     const [height, setHeight] = useState(window.innerHeight - 105);
     const [style, setStyle] = useState({ width: width, height: height });
@@ -23,10 +23,6 @@ const NoteBoard = (props: PropTypes) => {
 
     const setDraggingState = (value: boolean) => {
         setDragging(value);
-    };
-
-    const setZIndexState = () => {
-        setZIndex(zIndex => zIndex + 1);
     };
 
     const setWidthState = (amount: number) => {
@@ -51,7 +47,6 @@ const NoteBoard = (props: PropTypes) => {
                         dragging={dragging}
                         setDraggingState={setDraggingState}
                         zIndex={zIndex}
-                        setZIndex={setZIndexState}
                         containerWidth={width}
                         setContainerWidth={setWidthState}
                         containerHeight={height}
@@ -61,7 +56,7 @@ const NoteBoard = (props: PropTypes) => {
                     />
                 );
             })}
-            <button id={classes.AddButton} onClick={() => dispatch({ type: 'CREATE_NOTE', boardId: props.id })} aria-label='Add Note'>+</button>
+            <button id={classes.AddButton} onClick={() => dispatch({ type: 'CREATE_NOTE' })} aria-label='Add Note'>+</button>
         </div>
     );
 };
