@@ -67,7 +67,7 @@ const boardReducer = (state = initialState, action: AnyAction) => {
                     ...state.boards[state.currentBoardId],
                     title: action.title
                 }
-            }
+            };
 
             updateLocalStorage('boards', newBoards);
 
@@ -113,6 +113,23 @@ const noteReducer = (state = initialState, action: AnyAction) => {
             const updatedBoard = updateNote(state, action.noteId, note);
 
             updateLocalStorage('boards', updatedBoard);
+
+            return {
+                ...state,
+                boards: updatedBoard
+            };
+        }
+        case 'DELETE_NOTE': {
+            const notes = { ...state.boards[state.currentBoardId].notes }
+            delete notes[action.id];
+            const updatedBoard = {
+                ...state.boards,
+                [state.currentBoardId]: {
+                    ...state.boards[state.currentBoardId],
+                    notes
+                }
+            }
+            updateLocalStorage('boards', updatedBoard)
 
             return {
                 ...state,

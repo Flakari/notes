@@ -61,7 +61,7 @@ const NoteBoard = (props: PropTypes) => {
                     />
                 );
             })}
-            <button onClick={() => dispatch({ type: 'CREATE_NOTE', boardId: props.id })}>Add Note</button>
+            <button id={classes.AddButton} onClick={() => dispatch({ type: 'CREATE_NOTE', boardId: props.id })} aria-label='Add Note'>+</button>
         </div>
     );
 };

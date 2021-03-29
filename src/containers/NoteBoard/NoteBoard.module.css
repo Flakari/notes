@@ -5,3 +5,18 @@
     background-color: #d6d4bc;
     z-index: 1;
 }
+
+#AddButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    height: 60px;
+    width: 60px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    font-size: 2.5em;
+    cursor: pointer;
+    display: flex;
+    place-content: center;
+    font-weight: 800;
+}

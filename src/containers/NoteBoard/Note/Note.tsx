@@ -31,7 +31,7 @@ const Note = (props: PropTypes) => {
     const [style, setStyle] = useState({ zIndex, top: props.top || 20, left: props.left || 20 });
     const [grabDivStyle, setGrabDivStyle] = useState({ cursor: 'grab' });
     const dispatch = useDispatch();
-    const [editorButtonClasses, setEditorButtonClasses] = useState('');
+    const [editorButtonClasses, setEditorButtonClasses] = useState([classes.NoteButtonContainer, classes.HideButtonContainer].join(' '));
 
     useEffect(() => {
         if (props.noteFocus.inFocus && props.noteFocus.id === note.id) {
@@ -124,6 +124,7 @@ const Note = (props: PropTypes) => {
                 editorClass={classes.NoteEditorContainer}
                 saveNote={saveNote}
             />
+            <button onClick={() => dispatch({ type: 'DELETE_NOTE', id: props.id })}>Delete</button>
         </div>
     );
 };
