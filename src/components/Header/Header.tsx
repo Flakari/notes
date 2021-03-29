@@ -4,7 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import Title from '../../containers/Title/Title';
 
 export const Header = () => {
-    const currentPageId = useSelector((state: any) => state.page.currentPageId);
+    const currentId = useSelector((state: any) => {
+        if (state.page.currentPageId !== '') return state.page.currentPageId;
+        if (state.board.currentBoardId !== '') return state.board.currentBoardId;
+        return '';
+    });
     const dispatch = useDispatch();
 
     const clickHandler = () => {
@@ -14,7 +18,7 @@ export const Header = () => {
     return (
         <header id={classes.MainHeader}>
             <div id={classes.TitleContainer}>
-                {currentPageId !== '' ? <Title key={currentPageId} /> : <p>Notes</p>}
+                {currentId !== '' ? <Title key={currentId} id={currentId} /> : <p>Notes</p>}
             </div>
             <button id={classes.CreateNote} onClick={clickHandler}>Create Note</button>
         </header>

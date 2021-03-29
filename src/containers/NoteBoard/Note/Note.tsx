@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import EditorContainer from '../../EditorContainer/EditorContainer';
 
@@ -17,6 +17,8 @@ interface PropTypes {
     id: string;
     top: number;
     left: number;
+    noteFocus: { id: string, inFocus: boolean };
+    setNoteFocus: any;
 }
 
 const Note = (props: PropTypes) => {
@@ -29,6 +31,15 @@ const Note = (props: PropTypes) => {
     const [style, setStyle] = useState({ zIndex, top: props.top || 20, left: props.left || 20 });
     const [grabDivStyle, setGrabDivStyle] = useState({ cursor: 'grab' });
     const dispatch = useDispatch();
+    const [editorButtonClasses, setEditorButtonClasses] = useState('');
+
+    useEffect(() => {
+        if (props.noteFocus.inFocus && props.noteFocus.id === note.id) {
+            setEditorButtonClasses(classes.NoteButtonContainer);
+        } else {
+            setEditorButtonClasses([classes.NoteButtonContainer, classes.HideButtonContainer].join(' '));
+        }
+    }, [props.noteFocus, note.id])
 
     const dragStart = (e: any) => {
         e.stopPropagation();
@@ -87,13 +98,19 @@ const Note = (props: PropTypes) => {
         dispatch({ type: 'SAVE_NOTE_CONTENT', noteId: id, content });
     }, [dispatch]);
 
+    const clickHandler = (e: SyntheticEvent) => {
+        e.stopPropagation();
+        props.setNoteFocus({ id: note.id, inFocus: true });
+        zIndexHandler();
+    };
+
     return (
         <div
             className={classes.Note}
             style={style}
             onMouseMove={onDrag}
             onMouseUp={dragEnd}
-
+            onClick={clickHandler}
         >
             <div
                 className={classes.NoteGrabContainer}
@@ -103,7 +120,7 @@ const Note = (props: PropTypes) => {
             <EditorContainer
                 id={props.id}
                 content={note.content}
-                editorButtonClass={classes.NoteButtonContainer}
+                editorButtonClass={editorButtonClasses}
                 editorClass={classes.NoteEditorContainer}
                 saveNote={saveNote}
             />

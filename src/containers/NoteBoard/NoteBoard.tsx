@@ -19,6 +19,7 @@ const NoteBoard = (props: PropTypes) => {
     const dispatch = useDispatch();
     const notes = useSelector((state: State) => state.board.boards[props.id].notes);
     const keys = useSelector(() => Object.keys(notes));
+    const [noteFocus, setNoteFocus] = useState({ id: '', inFocus: false });
 
     const setDraggingState = (value: boolean) => {
         setDragging(value);
@@ -39,7 +40,7 @@ const NoteBoard = (props: PropTypes) => {
     };
 
     return (
-        <div id={classes.NoteBoard} style={style}>
+        <div id={classes.NoteBoard} style={style} onClick={() => setNoteFocus({ id: '', inFocus: false })}>
             {keys.map(item => {
                 return (
                     <Note
@@ -55,6 +56,8 @@ const NoteBoard = (props: PropTypes) => {
                         setContainerWidth={setWidthState}
                         containerHeight={height}
                         setContainerHeight={setHeightState}
+                        noteFocus={noteFocus}
+                        setNoteFocus={setNoteFocus}
                     />
                 );
             })}

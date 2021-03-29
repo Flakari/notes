@@ -49,7 +49,7 @@ const updateNote = (state: State, id: string, noteValue: Note) => {
 
 const boardReducer = (state = initialState, action: AnyAction) => {
     switch (action.type) {
-        case 'CREATE_BOARD':
+        case 'CREATE_BOARD': {
             if (Object.keys(state.boards).length >= 2) return state;
             const id = v4();
             const newBoards = { ...state.boards }
@@ -59,6 +59,23 @@ const boardReducer = (state = initialState, action: AnyAction) => {
                 ...state,
                 boards: newBoards
             };
+        }
+        case 'SAVE_BOARD_TITLE': {
+            const newBoards = {
+                ...state.boards,
+                [state.currentBoardId]: {
+                    ...state.boards[state.currentBoardId],
+                    title: action.title
+                }
+            }
+
+            updateLocalStorage('boards', newBoards);
+
+            return {
+                ...state,
+                boards: newBoards
+            };
+        }
         case 'SHOW_BOARD':
             return { ...state, currentBoardId: action.id, showBoard: true };
         case 'HIDE_BOARD':
