@@ -24,20 +24,20 @@ const Note = (props: PropTypes) => {
     const note = useSelector((state: State) => state.board.boards[boardId].notes[props.id]);
     const [diffX, setDiffX] = useState(0);
     const [diffY, setDiffY] = useState(0);
-    const [right, setRight] = useState(0);
-    const [bottom, setBottom] = useState(0);
     const [focus, setFocus] = useState(false);
     const [zIndex, setZIndex] = useState(0);
-    const [style, setStyle] = useState({ zIndex, top: props.top || 20, left: props.left || 20, cursor: 'grab' });
+    const [style, setStyle] = useState({ zIndex, top: props.top || 20, left: props.left || 20 });
+    const [grabDivStyle, setGrabDivStyle] = useState({ cursor: 'grab' });
     const dispatch = useDispatch();
 
     const dragStart = (e: any) => {
-        setDiffX(e.screenX - e.currentTarget.getBoundingClientRect().left);
-        setDiffY(e.screenY - e.currentTarget.getBoundingClientRect().top);
+        e.stopPropagation();
+        setDiffX(e.screenX - e.target.getBoundingClientRect().left);
+        setDiffY(e.screenY - e.target.getBoundingClientRect().top);
 
         props.setDraggingState(true);
         setFocus(true);
-        setStyle({ ...style, cursor: 'grabbing' });
+        setGrabDivStyle({ cursor: 'grabbing' });
         zIndexHandler();
     };
 
@@ -67,9 +67,7 @@ const Note = (props: PropTypes) => {
 
         setFocus(false);
         props.setDraggingState(false);
-        setStyle({ ...style, cursor: 'grab' });
-        setRight(right);
-        setBottom(bottom);
+        setGrabDivStyle({ cursor: 'grab' });
 
         if (bottom >= props.containerHeight - 20) {
             props.setContainerHeight(bottom - 20);
@@ -93,15 +91,20 @@ const Note = (props: PropTypes) => {
         <div
             className={classes.Note}
             style={style}
-            onMouseDown={dragStart}
             onMouseMove={onDrag}
             onMouseUp={dragEnd}
+
         >
+            <div
+                className={classes.NoteGrabContainer}
+                onMouseDown={dragStart}
+                style={grabDivStyle}
+            ><hr /></div>
             <EditorContainer
                 id={props.id}
                 content={note.content}
                 editorButtonClass={classes.NoteButtonContainer}
-                editorClass={''}
+                editorClass={classes.NoteEditorContainer}
                 saveNote={saveNote}
             />
         </div>

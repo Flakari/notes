@@ -1,13 +1,34 @@
 .Note {
+    display: grid;
+    box-sizing: border-box;
+    grid-template-rows: 35px 1fr;
     min-height: 240px;
     min-width: 220px;
     max-width: 500px;
-    background-color: white;
+    background-color: #ffffd7;
+    color: #4e4e00;
     position: absolute;
-    cursor: grab;
+    border-radius: 2px;
+    box-shadow: #969583 -2px 2px 4px;
+}
+
+.NoteEditorContainer {
+    cursor: text;
+    overflow: auto;
+    padding: 0 25px;
+}
+
+.NoteGrabContainer {
+    display: flex;
+    place-items: center;
+}
+
+.NoteGrabContainer > hr {
+    border-color: #b7b71c;
+    width: 90%;
 }
 
 .NoteButtonContainer {
     position: absolute;
-    top: -50px;
+    top: -100px;
 }
