@@ -35,6 +35,11 @@ const NoteBoard = (props: PropTypes) => {
         setStyle({ ...style, height: amount });
     };
 
+    const addNote = () => {
+        dispatch({ type: 'CREATE_NOTE' });
+        dispatch({ type: 'UPDATE_BOARD_ZINDEX', zIndex: zIndex + 1 });
+    }
+
     return (
         <div id={classes.NoteBoard} style={style} onClick={() => setNoteFocus({ id: '', inFocus: false })}>
             {keys.map(item => {
@@ -56,7 +61,7 @@ const NoteBoard = (props: PropTypes) => {
                     />
                 );
             })}
-            <button id={classes.AddButton} onClick={() => dispatch({ type: 'CREATE_NOTE' })} aria-label='Add Note'>+</button>
+            <button id={classes.AddButton} onClick={addNote} aria-label='Add Note'>+</button>
         </div>
     );
 };

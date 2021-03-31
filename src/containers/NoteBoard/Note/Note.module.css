@@ -30,9 +30,5 @@
 
 .NoteButtonContainer {
     position: absolute;
-    top: -100px;
-}
-
-.HideButtonContainer {
-    display: none;
+    top: -50px;
 }

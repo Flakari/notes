@@ -46,8 +46,8 @@ const MenuContainer = () => {
                 {(state) => (
                     <div style={{ ...defaultStyle, ...transitionStyles[state] }} id={classes.MenuContainer} ref={containerRef}>
                         <div id={classes.MenuButtonContainer}>
-                            <button onClick={showPages}>Pages</button>
-                            <button onClick={showBoard}>Board</button>
+                            <button className={showPagesMenu ? classes.active : undefined} onClick={showPages}>Pages</button>
+                            <button className={!showPagesMenu ? classes.active : undefined} onClick={showBoard}>Board</button>
                         </div>
                         {showPagesMenu ? <PageMenu props={props} /> : <BoardMenu props={props} />}
                     </div>

@@ -29,7 +29,7 @@ const EditorButton = (props: PropTypes) => {
 
     if (props.hasMenu) {
         button = (
-            <div>
+            <div className={classes.ButtonWithMenuContainer}>
                 {button}
                 <button
                     onMouseDown={() => props.showButton!(props.type)}

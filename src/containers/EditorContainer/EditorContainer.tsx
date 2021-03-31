@@ -11,6 +11,7 @@ interface PropTypes {
     content: string;
     editorButtonClass: string;
     editorClass: string;
+    showButtons?: boolean;
 }
 
 const textColorMap: { [key: string]: {} } = {};
@@ -26,7 +27,7 @@ for (let item of fontSizes.sizes) {
     fontSizeMap[`${item}-FONTSIZE`] = { fontSize: item };
 }
 
-const EditorContainer = ({ id, saveNote, content, editorButtonClass, editorClass }: PropTypes) => {
+const EditorContainer = ({ id, saveNote, content, editorButtonClass, editorClass, showButtons }: PropTypes) => {
     const [editorState, setEditorState] = useState(content ? () => EditorState.createWithContent(convertFromRaw(JSON.parse(content))) : () => EditorState.createEmpty());
     const contentState = editorState.getCurrentContent();
     const editorContainerRef = useRef<HTMLDivElement>(null);
@@ -131,13 +132,13 @@ const EditorContainer = ({ id, saveNote, content, editorButtonClass, editorClass
 
     return (
         <>
-            <EditorButtonContainer
+            {showButtons === undefined || showButtons ? <EditorButtonContainer
                 editorState={editorState}
                 setEditorState={setEditorState}
                 contentState={contentState}
                 removeComponentLoadedState={removeComponentLoadedState}
                 editorButtonClass={editorButtonClass}
-            />
+            /> : null}
             <div ref={editorContainerRef} className={editorClass} onClick={focusEditor}>
                 <Editor
                     ref={editorRef}

@@ -31,13 +31,13 @@ const Note = (props: PropTypes) => {
     const [style, setStyle] = useState({ zIndex, top: props.top || 20, left: props.left || 20 });
     const [grabDivStyle, setGrabDivStyle] = useState({ cursor: 'grab' });
     const dispatch = useDispatch();
-    const [editorButtonClasses, setEditorButtonClasses] = useState([classes.NoteButtonContainer, classes.HideButtonContainer].join(' '));
+    const [showEditorButtons, setShowEditorButtons] = useState(false);
 
     useEffect(() => {
         if (props.noteFocus.inFocus && props.noteFocus.id === note.id) {
-            setEditorButtonClasses(classes.NoteButtonContainer);
+            setShowEditorButtons(true);
         } else {
-            setEditorButtonClasses([classes.NoteButtonContainer, classes.HideButtonContainer].join(' '));
+            setShowEditorButtons(false);
         }
     }, [props.noteFocus, note.id])
 
@@ -55,6 +55,7 @@ const Note = (props: PropTypes) => {
     const zIndexHandler = () => {
         if (zIndex === props.zIndex) return;
         dispatch({ type: 'UPDATE_NOTE_ZINDEX', noteId: props.id, zIndex: props.zIndex + 1 });
+        dispatch({ type: 'UPDATE_BOARD_ZINDEX', zIndex: props.zIndex + 1 });
         setStyle({ ...style, zIndex: props.zIndex + 1 });
     };
 
@@ -119,9 +120,10 @@ const Note = (props: PropTypes) => {
             <EditorContainer
                 id={props.id}
                 content={note.content}
-                editorButtonClass={editorButtonClasses}
+                editorButtonClass={classes.NoteButtonContainer}
                 editorClass={classes.NoteEditorContainer}
                 saveNote={saveNote}
+                showButtons={showEditorButtons}
             />
             <button onClick={(e: SyntheticEvent) => { dispatch({ type: 'DELETE_NOTE', id: props.id }); e.stopPropagation() }}>Delete</button>
         </div>
