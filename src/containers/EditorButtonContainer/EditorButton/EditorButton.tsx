@@ -1,7 +1,8 @@
-import { SyntheticEvent } from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
+import { EditorState } from 'draft-js';
 
 import ColorContainer from '../../ColorContainer/ColorContainer';
-import classes from '../EditorButtonContainer.module.css';
+import classes from './EditorButton.module.css';
 
 interface PropTypes {
     type: string;
@@ -11,9 +12,28 @@ interface PropTypes {
     fn: any;
     showValue?: boolean;
     showButton?: (type: string) => void;
+    editorState: EditorState;
+    styleType: string;
 }
 
 const EditorButton = (props: PropTypes) => {
+    const [active, setActive] = useState(false);
+    const [selection, setSelection] = useState(props.editorState.getSelection());
+
+    useEffect(() => {
+        if (props.styleType === 'inline') {
+            setActive(props.editorState.getCurrentInlineStyle().has(props.type));
+        }
+
+        if (props.styleType === 'block' && props.type !== 'unstyled') {
+            setActive(props.editorState.getCurrentContent().getBlockForKey(selection.getAnchorKey()) && props.editorState.getCurrentContent().getBlockForKey(selection.getAnchorKey()).getType() === props.type)
+        }
+    }, [props.editorState, props.type, selection, props.styleType]);
+
+    useEffect(() => {
+        setSelection(props.editorState.getSelection());
+    }, [props.editorState]);
+
     const clickHandler = (e: SyntheticEvent) => {
         e.preventDefault();
         props.fn(props.type);
@@ -21,7 +41,7 @@ const EditorButton = (props: PropTypes) => {
 
     let button = (
         <button
-            className={[classes.InlineButton, `fas fa-${props.icon}`].join(' ')}
+            className={[classes.InlineButton, `fas fa-${props.icon}`, active ? classes.active : null].join(' ')}
             onMouseDown={clickHandler}
             aria-label={props.type.toLowerCase()}
         ></button>

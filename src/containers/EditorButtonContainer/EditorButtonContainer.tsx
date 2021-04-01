@@ -168,6 +168,8 @@ const EditorButtonContainer = (props: PropTypes) => {
                         fn={fn}
                         showValue={showValue}
                         showButton={showButton}
+                        editorState={props.editorState}
+                        styleType='inline'
                     />;
                 }
 
@@ -178,6 +180,8 @@ const EditorButtonContainer = (props: PropTypes) => {
                         fn={fontSizeChange}
                         type={style.type}
                         default='16'
+                        editorState={props.editorState}
+                        styleType='inline'
                     />;
                 }
 
@@ -192,6 +196,8 @@ const EditorButtonContainer = (props: PropTypes) => {
                         type={style.type}
                         icon={style.icon}
                         fn={onBlockStyleClick}
+                        editorState={props.editorState}
+                        styleType='block'
                     />;
                 }
 
@@ -202,6 +208,8 @@ const EditorButtonContainer = (props: PropTypes) => {
                         fn={onBlockStyleClick}
                         type={style.type}
                         default='headerone'
+                        editorState={props.editorState}
+                        styleType='block'
                     />;
                 }
 
