@@ -19,7 +19,7 @@ const highlightColorMap: { [key: string]: {} } = {};
 const fontSizeMap: { [key: string]: {} } = {};
 
 for (let item of colorData.basic) {
-    textColorMap[`${item.name}-COLOR`] = { color: item.color };
+    textColorMap[`${item.name}-TEXTCOLOR`] = { color: item.color };
     highlightColorMap[`${item.name}-HIGHLIGHT`] = { backgroundColor: item.color };
 }
 

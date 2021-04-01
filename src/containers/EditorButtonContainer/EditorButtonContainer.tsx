@@ -20,7 +20,7 @@ const highlightColorArr: string[] = [];
 const fontSizeArr = fontSizes.sizes.map(item => `${item}-FONTSIZE`);
 
 for (let item of colorData.basic) {
-    textColorArr.push(`${item.name}-COLOR`);
+    textColorArr.push(`${item.name}-TEXTCOLOR`);
     highlightColorArr.push(`${item.name}-HIGHLIGHT`);
 }
 
@@ -104,7 +104,7 @@ const EditorButtonContainer = (props: PropTypes) => {
             const newStyle = Modifier.applyInlineStyle(
                 removeInlineStyle(colorArr).getCurrentContent(),
                 props.editorState.getSelection(),
-                type === 'TEXTCOLOR' ? `${color}-COLOR` : `${color}-HIGHLIGHT`
+                type === 'TEXTCOLOR' ? `${color}-TEXTCOLOR` : `${color}-HIGHLIGHT`
             );
             props.setEditorState(EditorState.push(
                 props.editorState,
