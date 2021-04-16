@@ -68,6 +68,7 @@ const Note = (props: PropTypes) => {
             if (top < 20) top = 20;
             if (left < 20) left = 20;
 
+            setShowEditorButtons(false);
             setStyle({ ...style, left, top });
         }
     };
@@ -81,7 +82,7 @@ const Note = (props: PropTypes) => {
         setGrabDivStyle({ cursor: 'grab' });
 
         if (bottom >= props.containerHeight - 20) {
-            props.setContainerHeight(bottom - 20);
+            props.setContainerHeight(bottom - 80);
         }
 
         if (right >= props.containerWidth - 20) {

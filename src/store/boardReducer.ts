@@ -63,6 +63,22 @@ const updateBoardZIndex = (state: State, board: { [name: string]: Board }, zInde
     };
 };
 
+// Takes care of updating state and local storage, something that is needed in each state update
+const updateBoardReducer = (state: State, newBoard: any) => {
+    updateLocalStorage('boards', newBoard);
+    return {
+        ...state,
+        boards: newBoard
+    };
+};
+
+const updateNoteInReducer = (state: State, id: string, changeValue: any) => {
+    const note = createTempNote(state, id, changeValue);
+    const updatedBoard = updateNote(state, id, note);
+
+    return updateBoardReducer(state, updatedBoard);
+};
+
 const boardReducer = (state = initialState, action: AnyAction) => {
     switch (action.type) {
         case 'CREATE_BOARD': {
@@ -70,11 +86,8 @@ const boardReducer = (state = initialState, action: AnyAction) => {
             const id = v4();
             const newBoards = { ...state.boards }
             newBoards[id] = { title: '', notes: {}, id, width: 0, height: 0, maxZIndex: 1 };
-            updateLocalStorage('boards', newBoards);
-            return {
-                ...state,
-                boards: newBoards
-            };
+
+            return updateBoardReducer(state, newBoards);
         }
         case 'SAVE_BOARD_TITLE': {
             const newBoards = {
@@ -84,21 +97,10 @@ const boardReducer = (state = initialState, action: AnyAction) => {
                     title: action.title
                 }
             };
-
-            updateLocalStorage('boards', newBoards);
-
-            return {
-                ...state,
-                boards: newBoards
-            };
+            return updateBoardReducer(state, newBoards);
         }
         case 'UPDATE_BOARD_ZINDEX':
-            const updatedZIndex = updateBoardZIndex(state, state.boards, action.zIndex);
-            updateLocalStorage('boards', updatedZIndex);
-            return {
-                ...state,
-                boards: updatedZIndex
-            };
+            return updateBoardReducer(state, updateBoardZIndex(state, state.boards, action.zIndex));
         case 'SHOW_BOARD':
             return { ...state, currentBoardId: action.id, showBoard: true };
         case 'HIDE_BOARD':
@@ -116,44 +118,14 @@ const noteReducer = (state = initialState, action: AnyAction) => {
             const tempBoardsState = { ...state.boards };
             const notes = tempBoardsState[state.currentBoardId].notes;
             notes[id] = { id, content: '', left: 0, top: 0, right: 0, bottom: 0, zIndex: newZIndex };
-            updateLocalStorage('boards', tempBoardsState);
 
-            return {
-                ...state,
-                boards: tempBoardsState
-            };
-        case 'UPDATE_NOTE_POSITION': {
-            const note = createTempNote(state, action.noteId, { ...action.position });
-            const updatedBoard = updateNote(state, action.noteId, note);
-            updateLocalStorage('boards', updatedBoard);
-
-            return {
-                ...state,
-                boards: updatedBoard
-            };
-        }
-        case 'UPDATE_NOTE_ZINDEX': {
-            const note = createTempNote(state, action.noteId, { zIndex: action.zIndex });
-            const updatedBoard = updateNote(state, action.noteId, note);
-
-            updateLocalStorage('boards', updatedBoard);
-
-            return {
-                ...state,
-                boards: updatedBoard
-            };
-        }
-        case 'SAVE_NOTE_CONTENT': {
-            const note = createTempNote(state, action.noteId, { content: action.content });
-            const updatedBoard = updateNote(state, action.noteId, note);
-
-            updateLocalStorage('boards', updatedBoard);
-
-            return {
-                ...state,
-                boards: updatedBoard
-            };
-        }
+            return updateBoardReducer(state, tempBoardsState);
+        case 'UPDATE_NOTE_POSITION':
+            return updateNoteInReducer(state, action.noteId, { ...action.position });
+        case 'UPDATE_NOTE_ZINDEX':
+            return updateNoteInReducer(state, action.noteId, { zIndex: action.zIndex });
+        case 'SAVE_NOTE_CONTENT':
+            return updateNoteInReducer(state, action.noteId, { content: action.content });
         case 'DELETE_NOTE': {
             const notes = { ...state.boards[state.currentBoardId].notes }
             delete notes[action.id];
@@ -164,12 +136,8 @@ const noteReducer = (state = initialState, action: AnyAction) => {
                     notes
                 }
             }
-            updateLocalStorage('boards', updatedBoard)
 
-            return {
-                ...state,
-                boards: updatedBoard
-            };
+            return updateBoardReducer(state, updatedBoard);
         }
         default:
             return state;
