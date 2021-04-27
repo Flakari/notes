@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import classes from './NoteBoard.module.css';
@@ -13,7 +13,7 @@ interface PropTypes {
 const NoteBoard = (props: PropTypes) => {
     const [dragging, setDragging] = useState(false);
     const zIndex = useSelector((state: State) => state.board.boards[props.id].maxZIndex);
-    const [width, setWidth] = useState(window.innerWidth - 1);
+    const [width, setWidth] = useState(window.innerWidth);
     const [height, setHeight] = useState(window.innerHeight - 105);
     const [style, setStyle] = useState({ width: width, height: height });
     const dispatch = useDispatch();
@@ -25,15 +25,9 @@ const NoteBoard = (props: PropTypes) => {
         setDragging(value);
     };
 
-    const setWidthState = (amount: number) => {
-        setWidth(amount);
-        setStyle({ ...style, width: amount });
-    };
-
-    const setHeightState = (amount: number) => {
-        setHeight(amount);
-        setStyle({ ...style, height: amount });
-    };
+    useEffect(() => {
+        setStyle({ height, width });
+    }, [height, width]);
 
     const addNote = () => {
         dispatch({ type: 'CREATE_NOTE' });
@@ -53,9 +47,9 @@ const NoteBoard = (props: PropTypes) => {
                         setDraggingState={setDraggingState}
                         zIndex={zIndex}
                         containerWidth={width}
-                        setContainerWidth={setWidthState}
+                        setContainerWidth={setWidth}
                         containerHeight={height}
-                        setContainerHeight={setHeightState}
+                        setContainerHeight={setHeight}
                         noteFocus={noteFocus}
                         setNoteFocus={setNoteFocus}
                     />
