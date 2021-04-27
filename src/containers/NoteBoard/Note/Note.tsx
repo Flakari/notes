@@ -26,8 +26,7 @@ const Note = (props: PropTypes) => {
     const [diffX, setDiffX] = useState(0);
     const [diffY, setDiffY] = useState(0);
     const [focus, setFocus] = useState(false);
-    const zIndex = useSelector(() => note.zIndex)
-    // const [zIndex, setZIndex] = useState(0);
+    const zIndex = useSelector(() => note.zIndex);
     const [style, setStyle] = useState({ zIndex, top: props.top || 20, left: props.left || 20 });
     const [grabDivStyle, setGrabDivStyle] = useState({ cursor: 'grab' });
     const dispatch = useDispatch();
@@ -75,7 +74,7 @@ const Note = (props: PropTypes) => {
 
     const dragEnd = (e: any) => {
         let right = e.currentTarget.getBoundingClientRect().right + window.scrollX;
-        let bottom = e.currentTarget.getBoundingClientRect().bottom + window.scrollY
+        let bottom = e.currentTarget.getBoundingClientRect().bottom + window.scrollY;
 
         setFocus(false);
         props.setDraggingState(false);
@@ -125,6 +124,7 @@ const Note = (props: PropTypes) => {
                 editorClass={classes.NoteEditorContainer}
                 saveNote={saveNote}
                 showButtons={showEditorButtons}
+                editorButtonSelection='basic'
             />
             <button onClick={(e: SyntheticEvent) => { dispatch({ type: 'DELETE_NOTE', id: props.id }); e.stopPropagation() }}>Delete</button>
         </div>

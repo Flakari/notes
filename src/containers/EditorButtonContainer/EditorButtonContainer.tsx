@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EditorState, RichUtils, Modifier } from 'draft-js';
 
 import colorData from '../../colors.json';
@@ -13,6 +13,7 @@ interface PropTypes {
     contentState: any;
     removeComponentLoadedState: () => void;
     editorButtonClass: string;
+    editorButtonSelection: 'basic' | 'full';
 }
 
 const textColorArr: string[] = [];
@@ -35,40 +36,53 @@ const headers = [
 
 const DEFAULT_TEXT_SIZE = 16;
 
+interface ButtonStyle {
+    icon?: string;
+    type: string;
+    btnType?: string;
+    color?: boolean;
+    hasMenu?: boolean;
+}
+
 const EditorButtonContainer = (props: PropTypes) => {
     const [showTextColor, setShowTextColor] = useState(false);
     const [showHighlightColor, setShowHighlightColor] = useState(false);
-    const [currentTextColor, setCurrentTextColor] = useState('black');
-    const [currentHighlightColor, setCurrentHighlightColor] = useState('white');
+    const [inlineStyles, setInlineStyles] = useState<ButtonStyle[]>([]);
+    const [blockStyles, setBlockStyles] = useState<ButtonStyle[]>([]);
 
-    interface InlineStyle {
-        icon?: string;
-        type: string;
-        btnType?: string;
-        color?: string;
-        hasMenu?: boolean;
-    }
+    useEffect(() => {
+        const basicInlineStyles: ButtonStyle[] = [
+            { icon: 'bold', type: 'BOLD', btnType: 'button' },
+            { icon: 'italic', type: 'ITALIC', btnType: 'button' },
+            { icon: 'underline', type: 'UNDERLINE', btnType: 'button' },
+            { icon: 'strikethrough', type: 'STRIKETHROUGH', btnType: 'button' },
+            { icon: 'superscript', type: 'SUPERSCRIPT', btnType: 'button' },
+            { icon: 'subscript', type: 'SUBSCRIPT', btnType: 'button' },
+        ];
 
-    const inlineStyles: InlineStyle[] = [
-        { icon: 'bold', type: 'BOLD', btnType: 'button' },
-        { icon: 'italic', type: 'ITALIC', btnType: 'button' },
-        { icon: 'underline', type: 'UNDERLINE', btnType: 'button' },
-        { icon: 'strikethrough', type: 'STRIKETHROUGH', btnType: 'button' },
-        { icon: 'font', type: 'TEXTCOLOR', btnType: 'button', color: currentTextColor, hasMenu: true },
-        { icon: 'highlighter', type: 'HIGHLIGHT', btnType: 'button', color: currentHighlightColor, hasMenu: true },
-        { icon: 'superscript', type: 'SUPERSCRIPT', btnType: 'button' },
-        { icon: 'subscript', type: 'SUBSCRIPT', btnType: 'button' },
-        { btnType: 'select', type: 'FONTSIZE' }
-    ];
+        const basicBlockStyles: ButtonStyle[] = [
+            { icon: 'list-ul', type: 'unordered-list-item', btnType: 'button' },
+            { icon: 'list-ol', type: 'ordered-list-item', btnType: 'button' }
+        ];
 
-    const blockStyles = [
-        { btnType: 'select', type: 'headers' },
-        { icon: 'list-ul', type: 'unordered-list-item', btnType: 'button' },
-        { icon: 'list-ol', type: 'ordered-list-item', btnType: 'button' },
-        { icon: 'quote-right', type: 'blockquote', btnType: 'button' },
-        { icon: 'code', type: 'code-block', btnType: 'button' },
-        { icon: 'remove-format', type: 'unstyled', btnType: 'button' },
-    ];
+        const fullInlineStyles: ButtonStyle[] = [
+            ...basicInlineStyles,
+            { icon: 'font', type: 'TEXTCOLOR', btnType: 'button', color: true, hasMenu: true },
+            { icon: 'highlighter', type: 'HIGHLIGHT', btnType: 'button', color: true, hasMenu: true },
+            { btnType: 'select', type: 'FONTSIZE' }
+        ];
+
+        const fullBlockStyles: ButtonStyle[] = [
+            { btnType: 'select', type: 'headers' },
+            ...basicBlockStyles,
+            { icon: 'quote-right', type: 'blockquote', btnType: 'button' },
+            { icon: 'code', type: 'code-block', btnType: 'button' },
+            { icon: 'remove-format', type: 'unstyled', btnType: 'button' },
+        ];
+
+        setInlineStyles(() => props.editorButtonSelection === 'basic' ? basicInlineStyles : fullInlineStyles);
+        setBlockStyles(() => props.editorButtonSelection === 'basic' ? basicBlockStyles : fullBlockStyles);
+    }, [props.editorButtonSelection]);
 
     const showButton = (type: string) => {
         if (type === 'TEXTCOLOR') {
@@ -121,7 +135,6 @@ const EditorButtonContainer = (props: PropTypes) => {
             ));
         }
 
-        type === 'TEXTCOLOR' ? setCurrentTextColor(color) : setCurrentHighlightColor(color);
         props.removeComponentLoadedState();
     };
 
@@ -160,7 +173,7 @@ const EditorButtonContainer = (props: PropTypes) => {
         props.removeComponentLoadedState();
     };
 
-    const inlineButton = (btnStyle: InlineStyle) => {
+    const inlineButton = (btnStyle: ButtonStyle) => {
         const fn = 'color' in btnStyle ? colorChange :
             btnStyle.type === 'SUPERSCRIPT' || btnStyle.type === 'SUBSCRIPT' ? changeScriptAlignment : onInlineStyleClick;
         const showValue = btnStyle.type === 'TEXTCOLOR' ? showTextColor : showHighlightColor;

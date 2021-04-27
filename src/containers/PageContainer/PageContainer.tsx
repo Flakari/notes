@@ -22,6 +22,7 @@ const PageContainer = () => {
                 editorButtonClass={''}
                 saveNote={saveNote}
                 content={content}
+                editorButtonSelection='full'
             />
         </div>
     );

@@ -12,6 +12,7 @@ interface PropTypes {
     editorButtonClass: string;
     editorClass: string;
     showButtons?: boolean;
+    editorButtonSelection: 'basic' | 'full';
 }
 
 const textColorMap: { [key: string]: {} } = {};
@@ -27,7 +28,7 @@ for (let item of fontSizes.sizes) {
     fontSizeMap[`${item}-FONTSIZE`] = { fontSize: item };
 }
 
-const EditorContainer = ({ id, saveNote, content, editorButtonClass, editorClass, showButtons }: PropTypes) => {
+const EditorContainer = ({ id, saveNote, content, editorButtonClass, editorClass, showButtons, editorButtonSelection }: PropTypes) => {
     const [editorState, setEditorState] = useState(content ? () => EditorState.createWithContent(convertFromRaw(JSON.parse(content))) : () => EditorState.createEmpty());
     const contentState = editorState.getCurrentContent();
     const editorContainerRef = useRef<HTMLDivElement>(null);
@@ -138,6 +139,7 @@ const EditorContainer = ({ id, saveNote, content, editorButtonClass, editorClass
                 contentState={contentState}
                 removeComponentLoadedState={removeComponentLoadedState}
                 editorButtonClass={editorButtonClass}
+                editorButtonSelection={editorButtonSelection}
             /> : null}
             <div ref={editorContainerRef} className={editorClass} onClick={focusEditor}>
                 <Editor
