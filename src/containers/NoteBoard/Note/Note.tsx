@@ -28,6 +28,7 @@ const Note = (props: PropTypes) => {
     const [diffY, setDiffY] = useState(0);
     const [focus, setFocus] = useState(false);
     const zIndex = useSelector(() => note.zIndex);
+    const color = useSelector(() => note.color);
     const [style, setStyle] = useState({ zIndex, top: props.top || 20, left: props.left || 20 });
     const [grabDivStyle, setGrabDivStyle] = useState({ cursor: 'grab' });
     const dispatch = useDispatch();
@@ -41,7 +42,7 @@ const Note = (props: PropTypes) => {
             setShowEditorButtons(false);
             setShowNoteMenu(false);
         }
-    }, [props.noteFocus, note.id])
+    }, [props.noteFocus, note.id]);
 
     const dragStart = (e: any) => {
         e.stopPropagation();
@@ -71,6 +72,7 @@ const Note = (props: PropTypes) => {
             if (left < 20) left = 20;
 
             setShowEditorButtons(false);
+            setShowNoteMenu(false);
             setStyle({ ...style, left, top });
         }
     };
@@ -83,7 +85,7 @@ const Note = (props: PropTypes) => {
         props.setDraggingState(false);
         setGrabDivStyle({ cursor: 'grab' });
 
-        if (bottom >= props.containerHeight - 20) {
+        if (bottom >= props.containerHeight + 80) {
             props.setContainerHeight(bottom - 80);
         }
 
@@ -115,7 +117,7 @@ const Note = (props: PropTypes) => {
 
     return (
         <div
-            className={classes.Note}
+            className={[classes.Note, classes[color]].join(' ')}
             style={style}
             onMouseMove={onDrag}
             onMouseUp={dragEnd}
@@ -144,7 +146,7 @@ const Note = (props: PropTypes) => {
                     </svg>
                 </button> : null
             }
-            {showNoteMenu ? <NoteMenu id={props.id} /> : null}
+            {showNoteMenu ? <NoteMenu id={props.id} hideMenu={() => setShowNoteMenu(false)} /> : null}
         </div>
     );
 };

@@ -11,3 +11,14 @@
     flex-direction: column;
     z-index: 2;
 }
+
+.NoteSubMenu {
+    display: flex;
+    flex-direction: column;
+    border-left: 20px solid gray;
+    border-bottom: 2px solid gray;
+}
+
+.NoteSubMenu .NoteMenuItem:last-of-type {
+    border-bottom: 2px solid gray;
+}

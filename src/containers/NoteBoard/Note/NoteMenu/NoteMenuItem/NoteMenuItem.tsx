@@ -1,9 +1,8 @@
-import { SyntheticEvent } from "react";
 import classes from "./NoteMenuItem.module.css";
 
 interface PropTypes {
     children: string;
-    clickFunction?: (e: SyntheticEvent) => void;
+    clickFunction?: () => void;
 }
 
 const NoteMenuItem = (props: PropTypes) => {

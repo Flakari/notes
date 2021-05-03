@@ -12,6 +12,33 @@
     box-shadow: #969583 -2px 2px 4px;
 }
 
+.Note.blue {
+    background-color: #b6edff;
+    color: #004196;
+}
+
+.Note.blue hr {
+    border-color: #7eb7ff;
+}
+
+.Note.green {
+    background-color: #bbf2bb;
+    color: #004600;
+}
+
+.Note.green hr {
+    border-color: #00b900;
+}
+
+.Note.pink {
+    background-color: #ffe0e6;
+    color: #9d0000;
+}
+
+.Note.pink hr {
+    border-color: #ff5c5c;
+}
+
 .NoteEditorContainer {
     cursor: text;
     overflow: auto;

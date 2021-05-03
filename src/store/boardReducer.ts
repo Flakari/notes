@@ -11,6 +11,7 @@ export interface Note {
     right: number;
     bottom: number;
     zIndex: number;
+    color: string;
 }
 
 interface Board {
@@ -117,7 +118,7 @@ const noteReducer = (state = initialState, action: AnyAction) => {
             const newZIndex = state.boards[state.currentBoardId].maxZIndex + 1
             const tempBoardsState = { ...state.boards };
             const notes = tempBoardsState[state.currentBoardId].notes;
-            notes[id] = { id, content: '', left: 0, top: 0, right: 0, bottom: 0, zIndex: newZIndex };
+            notes[id] = { id, content: '', left: 0, top: 0, right: 0, bottom: 0, zIndex: newZIndex, color: '' };
 
             return updateBoardReducer(state, tempBoardsState);
         case 'UPDATE_NOTE_POSITION':
@@ -126,6 +127,8 @@ const noteReducer = (state = initialState, action: AnyAction) => {
             return updateNoteInReducer(state, action.noteId, { zIndex: action.zIndex });
         case 'SAVE_NOTE_CONTENT':
             return updateNoteInReducer(state, action.noteId, { content: action.content });
+        case 'CHANGE_NOTE_COLOR':
+            return updateNoteInReducer(state, action.noteId, { color: action.color });
         case 'DELETE_NOTE': {
             const notes = { ...state.boards[state.currentBoardId].notes }
             delete notes[action.id];
