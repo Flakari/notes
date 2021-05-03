@@ -4,6 +4,7 @@ import EditorContainer from '../../EditorContainer/EditorContainer';
 
 import classes from "./Note.module.css";
 import State from '../../../store/combinedState';
+import NoteMenu from './NoteMenu/NoteMenu';
 
 interface PropTypes {
     setDraggingState: (state: boolean) => void;
@@ -31,12 +32,14 @@ const Note = (props: PropTypes) => {
     const [grabDivStyle, setGrabDivStyle] = useState({ cursor: 'grab' });
     const dispatch = useDispatch();
     const [showEditorButtons, setShowEditorButtons] = useState(false);
+    const [showNoteMenu, setShowNoteMenu] = useState(false);
 
     useEffect(() => {
         if (props.noteFocus.inFocus && props.noteFocus.id === note.id) {
             setShowEditorButtons(true);
         } else {
             setShowEditorButtons(false);
+            setShowNoteMenu(false);
         }
     }, [props.noteFocus, note.id])
 
@@ -88,7 +91,9 @@ const Note = (props: PropTypes) => {
             props.setContainerWidth(right + 20);
         }
 
-        if (style.left !== note.left || style.top !== note.top || right !== note.right || bottom !== note.bottom) {
+        const noteMoved = style.left !== note.left || style.top !== note.top || right !== note.right || bottom !== note.bottom;
+
+        if (noteMoved) {
             const position = { left: style.left, top: style.top, right, bottom };
             dispatch({ type: 'UPDATE_NOTE_POSITION', noteId: props.id, position });
         }
@@ -102,6 +107,10 @@ const Note = (props: PropTypes) => {
         e.stopPropagation();
         props.setNoteFocus({ id: note.id, inFocus: true });
         zIndexHandler();
+    };
+
+    const toggleNoteMenu = () => {
+        setShowNoteMenu((prevState) => !prevState);
     };
 
     return (
@@ -126,7 +135,16 @@ const Note = (props: PropTypes) => {
                 showButtons={showEditorButtons}
                 editorButtonSelection='basic'
             />
-            <button onClick={(e: SyntheticEvent) => { dispatch({ type: 'DELETE_NOTE', id: props.id }); e.stopPropagation() }}>Delete</button>
+            {showEditorButtons ?
+                <button onClick={toggleNoteMenu} className={classes.NoteMenuButton}>
+                    <svg viewBox="0 0 515.555 515.555" xmlns="http://www.w3.org/2000/svg" aria-labelledby="menuTitle menuDesc" role="menu">
+                        <title id="menuTitle">Note Menu Button</title>
+                        <desc id="menuDesc">Opens menu for the corresponding note</desc>
+                        <path d="M303.347 18.875c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0M303.347 212.209c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0M303.347 405.541c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0" />
+                    </svg>
+                </button> : null
+            }
+            {showNoteMenu ? <NoteMenu id={props.id} /> : null}
         </div>
     );
 };

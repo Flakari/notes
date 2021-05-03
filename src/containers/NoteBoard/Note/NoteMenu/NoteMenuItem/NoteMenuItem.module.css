@@ -1,0 +1,17 @@
+.NoteMenuItem {
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 8px 10px;
+    border-bottom: 2px solid gray;
+}
+
+.NoteMenuItem:last-of-type {
+    border-bottom: none;
+}
+
+.NoteMenuItem:hover {
+    background-color: #dfdfdf;
+}
+
+
