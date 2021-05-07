@@ -11,8 +11,6 @@ interface PropTypes {
     zIndex: number;
     containerWidth: number;
     containerHeight: number;
-    setContainerWidth: (width: number) => void;
-    setContainerHeight: (height: number) => void;
     dragging: boolean;
     id: string;
     top: number;
@@ -86,11 +84,11 @@ const Note = (props: PropTypes) => {
         setGrabDivStyle({ cursor: 'grab' });
 
         if (bottom >= props.containerHeight + 80) {
-            props.setContainerHeight(bottom - 80);
+            dispatch({ type: 'UPDATE_BOARD_SIZE', direction: 'height', size: bottom - 80 });
         }
 
         if (right >= props.containerWidth - 20) {
-            props.setContainerWidth(right + 20);
+            dispatch({ type: 'UPDATE_BOARD_SIZE', direction: 'width', size: right + 20 });
         }
 
         const noteMoved = style.left !== note.left || style.top !== note.top || right !== note.right || bottom !== note.bottom;

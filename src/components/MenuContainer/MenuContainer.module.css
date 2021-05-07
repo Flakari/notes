@@ -27,7 +27,7 @@
     display: grid;
     grid-template-columns: 20% 1fr;
     width: 100%;
-    position: absolute;
+    position: fixed;
     z-index: 11;
     height: 300px;
     background-color: grey;

@@ -54,12 +54,12 @@ const updateNote = (state: State, id: string, noteValue: Note) => {
     };
 };
 
-const updateBoardZIndex = (state: State, board: { [name: string]: Board }, zIndex: number) => {
+const updateBoard = (state: State, board: { [name: string]: Board }, newBoardValue: {}) => {
     return {
         ...board,
         [state.currentBoardId]: {
             ...board[state.currentBoardId],
-            maxZIndex: zIndex
+            ...newBoardValue
         }
     };
 };
@@ -101,7 +101,9 @@ const boardReducer = (state = initialState, action: AnyAction) => {
             return updateBoardReducer(state, newBoards);
         }
         case 'UPDATE_BOARD_ZINDEX':
-            return updateBoardReducer(state, updateBoardZIndex(state, state.boards, action.zIndex));
+            return updateBoardReducer(state, updateBoard(state, state.boards, { maxZIndex: action.zIndex }));
+        case 'UPDATE_BOARD_SIZE':
+            return updateBoardReducer(state, updateBoard(state, state.boards, { [action.direction]: action.size }));
         case 'SHOW_BOARD':
             return { ...state, currentBoardId: action.id, showBoard: true };
         case 'HIDE_BOARD':
