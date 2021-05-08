@@ -32,6 +32,7 @@ const Note = (props: PropTypes) => {
     const dispatch = useDispatch();
     const [showEditorButtons, setShowEditorButtons] = useState(false);
     const [showNoteMenu, setShowNoteMenu] = useState(false);
+    const [editorButtonContainerClass, setEditorButtonContainerClass] = useState(classes.NoteButtonContainer);
 
     useEffect(() => {
         if (props.noteFocus.inFocus && props.noteFocus.id === note.id) {
@@ -75,9 +76,25 @@ const Note = (props: PropTypes) => {
         }
     };
 
+    const setEditorButtonClass = (right: number, top: number) => {
+        const classList: string[] = [classes.NoteButtonContainer];
+
+        if (right > (window.innerWidth * 0.85)) {
+            classList.push(classes.right);
+        }
+
+        if (top < ((window.innerHeight - 105) * 0.1)) {
+            classList.push(classes.bottom);
+        }
+
+        setEditorButtonContainerClass(classList.join(' '));
+    }
+
     const dragEnd = (e: any) => {
         let right = e.currentTarget.getBoundingClientRect().right + window.scrollX;
         let bottom = e.currentTarget.getBoundingClientRect().bottom + window.scrollY;
+
+        setEditorButtonClass(right - window.scrollX, style.top);
 
         setFocus(false);
         props.setDraggingState(false);
@@ -129,7 +146,7 @@ const Note = (props: PropTypes) => {
             <EditorContainer
                 id={props.id}
                 content={note.content}
-                editorButtonClass={classes.NoteButtonContainer}
+                editorButtonClass={editorButtonContainerClass}
                 editorClass={classes.NoteEditorContainer}
                 saveNote={saveNote}
                 showButtons={showEditorButtons}

@@ -42,8 +42,8 @@ const NoteBoard = (props: PropTypes) => {
         if (widthValue < window.innerWidth) {
             widthValue = '100%';
         }
-        setStyle({ height: heightValue, width: widthValue });
 
+        setStyle({ height: heightValue, width: widthValue });
     }, [height, width]);
 
     const addNote = () => {

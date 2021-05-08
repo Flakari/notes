@@ -56,8 +56,19 @@
 }
 
 .NoteButtonContainer {
+    width: 100%;
     position: absolute;
     top: -50px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.NoteButtonContainer.right {
+    justify-content: flex-end;
+}
+
+.NoteButtonContainer.bottom {
+    top: 105%;
 }
 
 .NoteMenuButton {
