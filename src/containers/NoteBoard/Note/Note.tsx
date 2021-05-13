@@ -28,7 +28,8 @@ const Note = (props: PropTypes) => {
     const zIndex = useSelector(() => note.zIndex);
     const color = useSelector(() => note.color);
     const [style, setStyle] = useState({ zIndex, top: props.top || 20, left: props.left || 20 });
-    const [grabDivStyle, setGrabDivStyle] = useState({ cursor: 'grab' });
+    const locks = useSelector(() => note.locks);
+    const [grabDivStyle, setGrabDivStyle] = useState(locks.position ? { cursor: 'default' } : { cursor: 'grab' });
     const dispatch = useDispatch();
     const [showEditorButtons, setShowEditorButtons] = useState(false);
     const [showNoteMenu, setShowNoteMenu] = useState(false);
@@ -43,7 +44,17 @@ const Note = (props: PropTypes) => {
         }
     }, [props.noteFocus, note.id]);
 
+    useEffect(() => {
+        if (locks.position) {
+            setGrabDivStyle({ cursor: 'default' })
+        } else {
+            setGrabDivStyle({ cursor: 'grab' });
+        }
+    }, [locks.position]);
+
     const dragStart = (e: any) => {
+        if (locks.position) return;
+
         e.stopPropagation();
         setDiffX(e.screenX - e.target.getBoundingClientRect().left);
         setDiffY(e.screenY - e.target.getBoundingClientRect().top);
@@ -62,6 +73,8 @@ const Note = (props: PropTypes) => {
     };
 
     const onDrag = (e: any) => {
+        if (locks.position) return;
+
         if (props.dragging && focus) {
             const APP_MENU_HEIGHT = 105;
             let top = e.screenY - diffY - APP_MENU_HEIGHT + window.scrollY;
@@ -91,6 +104,8 @@ const Note = (props: PropTypes) => {
     }
 
     const dragEnd = (e: any) => {
+        if (locks.position) return;
+
         let right = e.currentTarget.getBoundingClientRect().right + window.scrollX;
         let bottom = e.currentTarget.getBoundingClientRect().bottom + window.scrollY;
 
@@ -151,6 +166,7 @@ const Note = (props: PropTypes) => {
                 saveNote={saveNote}
                 showButtons={showEditorButtons}
                 editorButtonSelection='basic'
+                lockEditor={locks.editor}
             />
             {showEditorButtons ?
                 <button onClick={toggleNoteMenu} className={classes.NoteMenuButton}>

@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import classes from './NoteMenu.module.css';
 import NoteMenuItem from './NoteMenuItem/NoteMenuItem';
+import State from '../../../../store/combinedState';
 
 const noteColors = [
     { name: 'Original', color: '' },
@@ -11,6 +12,10 @@ const noteColors = [
     { name: 'Pink', color: 'pink' }
 ];
 
+type LockTypes = 'editor' | 'position' | 'delete';
+
+const lockTypes: LockTypes[] = ['editor', 'position', 'delete'];
+
 interface PropTypes {
     id: string;
     hideMenu: () => void;
@@ -18,7 +23,9 @@ interface PropTypes {
 
 const NoteMenu = (props: PropTypes) => {
     const dispatch = useDispatch();
+    const locks = useSelector((state: State) => state.board.boards[state.board.currentBoardId].notes[props.id].locks);
     const [showColorMenu, setShowColorMenu] = useState(false);
+    const [showLockMenu, setShowLockMenu] = useState(false);
 
     // Change Note color function
     const changeNoteColor = (color: string) => {
@@ -30,8 +37,16 @@ const NoteMenu = (props: PropTypes) => {
     };
 
     // Lock function, prevent note from moving and/or being deleted
+    const lockToggle = (lockType: string) => {
+        dispatch({ type: 'TOGGLE_NOTE_LOCK', noteId: props.id, lockType });
+    }
+
+    const toggleLockMenu = () => {
+        setShowLockMenu(prevState => !prevState);
+    };
 
     const deleteNote = () => {
+        if (locks.delete) return;
         dispatch({ type: 'DELETE_NOTE', id: props.id });
     };
 
@@ -45,7 +60,14 @@ const NoteMenu = (props: PropTypes) => {
                     </NoteMenuItem>
                 ))}
             </div> : null}
-            <NoteMenuItem>Lock</NoteMenuItem>
+            <NoteMenuItem clickFunction={toggleLockMenu}>Lock</NoteMenuItem>
+            {showLockMenu ? <div className={classes.NoteSubMenu}>
+                {lockTypes.map(item => (
+                    <NoteMenuItem key={item} clickFunction={() => lockToggle(item)}>
+                        {locks[item] ? <div className={classes.LockMenuItem}><div className="fas fa-lock"></div><p>{item}</p></div> : item}
+                    </NoteMenuItem>
+                ))}
+            </div> : null}
             <NoteMenuItem clickFunction={deleteNote}>Delete</NoteMenuItem>
         </div>
 

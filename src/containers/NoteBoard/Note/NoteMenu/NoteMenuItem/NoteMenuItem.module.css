@@ -4,6 +4,7 @@
     background: none;
     padding: 8px 10px;
     border-bottom: 2px solid gray;
+    text-transform: capitalize;
 }
 
 .NoteMenuItem:last-of-type {

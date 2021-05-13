@@ -1,4 +1,3 @@
-import { AnyAction } from 'redux';
 import { v4 } from 'uuid';
 
 import { updateLocalStorage } from './utility';
@@ -12,7 +11,14 @@ export interface Note {
     bottom: number;
     zIndex: number;
     color: string;
+    locks: {
+        editor: boolean,
+        position: boolean,
+        delete: boolean
+    }
 }
+
+type LockTypes = 'editor' | 'position' | 'delete';
 
 interface Board {
     title: string;
@@ -33,6 +39,38 @@ const initialState: State = {
     boards: localStorage.getItem('boards') ? JSON.parse(localStorage.getItem('boards') || '{}') : {},
     showBoard: false,
     currentBoardId: ''
+};
+
+interface BoardActions {
+    title: string;
+    id: string;
+    zIndex: number;
+    direction: string;
+    size: number;
+}
+
+interface NoteActions {
+    noteId: string;
+    position: { left: number, top: number, right: number, bottom: number };
+    content: string;
+    color: string;
+    lockType: LockTypes;
+}
+
+interface ReducerActions extends BoardActions, NoteActions {
+    type: string;
+}
+
+const createNewNote = (state: State) => {
+    const id = v4();
+    const newZIndex = state.boards[state.currentBoardId].maxZIndex + 1;
+    const tempBoardsState = { ...state.boards };
+    const notes = tempBoardsState[state.currentBoardId].notes;
+    notes[id] = {
+        id, content: '', left: 0, top: 0, right: 0, bottom: 0, zIndex: newZIndex, color: '', locks: { editor: false, position: false, delete: false }
+    };
+
+    return tempBoardsState;
 };
 
 const createTempNote = (state: State, id: string, changeValue: {}) => {
@@ -80,7 +118,7 @@ const updateNoteInReducer = (state: State, id: string, changeValue: any) => {
     return updateBoardReducer(state, updatedBoard);
 };
 
-const boardReducer = (state = initialState, action: AnyAction) => {
+const boardReducer = (state = initialState, action: ReducerActions) => {
     switch (action.type) {
         case 'CREATE_BOARD': {
             if (Object.keys(state.boards).length >= 2) return state;
@@ -107,22 +145,21 @@ const boardReducer = (state = initialState, action: AnyAction) => {
         case 'SHOW_BOARD':
             return { ...state, currentBoardId: action.id, showBoard: true };
         case 'HIDE_BOARD':
-            return { ...state, currentBoardId: action.id, showBoard: false };
+            return { ...state, currentBoardId: '', showBoard: false };
+        case 'DELETE_BOARD':
+            const newBoards = { ...state.boards };
+            delete newBoards[action.id];
+
+            return updateBoardReducer(state, newBoards);
         default:
             return noteReducer(state, action);
     }
 };
 
-const noteReducer = (state = initialState, action: AnyAction) => {
+const noteReducer = (state = initialState, action: ReducerActions) => {
     switch (action.type) {
         case 'CREATE_NOTE':
-            const id = v4();
-            const newZIndex = state.boards[state.currentBoardId].maxZIndex + 1
-            const tempBoardsState = { ...state.boards };
-            const notes = tempBoardsState[state.currentBoardId].notes;
-            notes[id] = { id, content: '', left: 0, top: 0, right: 0, bottom: 0, zIndex: newZIndex, color: '' };
-
-            return updateBoardReducer(state, tempBoardsState);
+            return updateBoardReducer(state, createNewNote(state));
         case 'UPDATE_NOTE_POSITION':
             return updateNoteInReducer(state, action.noteId, { ...action.position });
         case 'UPDATE_NOTE_ZINDEX':
@@ -131,6 +168,10 @@ const noteReducer = (state = initialState, action: AnyAction) => {
             return updateNoteInReducer(state, action.noteId, { content: action.content });
         case 'CHANGE_NOTE_COLOR':
             return updateNoteInReducer(state, action.noteId, { color: action.color });
+        case 'TOGGLE_NOTE_LOCK':
+            const lockPath = state.boards[state.currentBoardId].notes[action.noteId].locks
+
+            return updateNoteInReducer(state, action.noteId, { locks: { ...lockPath, [action.lockType]: !lockPath[action.lockType] } });
         case 'DELETE_NOTE': {
             const notes = { ...state.boards[state.currentBoardId].notes }
             delete notes[action.id];

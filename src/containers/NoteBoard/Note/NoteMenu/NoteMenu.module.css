@@ -18,3 +18,14 @@
     border-left: 20px solid gray;
     border-bottom: 2px solid gray;
 }
+
+.LockMenuItem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.LockMenuItem > p {
+    margin: 0;
+    margin-left: 10px;
+}

@@ -13,6 +13,7 @@ interface PropTypes {
     editorClass: string;
     showButtons?: boolean;
     editorButtonSelection: 'basic' | 'full';
+    lockEditor?: boolean;
 }
 
 const textColorMap: { [key: string]: {} } = {};
@@ -28,7 +29,7 @@ for (let item of fontSizes.sizes) {
     fontSizeMap[`${item}-FONTSIZE`] = { fontSize: item };
 }
 
-const EditorContainer = ({ id, saveNote, content, editorButtonClass, editorClass, showButtons, editorButtonSelection }: PropTypes) => {
+const EditorContainer = ({ id, saveNote, content, editorButtonClass, editorClass, showButtons, editorButtonSelection, lockEditor }: PropTypes) => {
     const [editorState, setEditorState] = useState(content ? () => EditorState.createWithContent(convertFromRaw(JSON.parse(content))) : () => EditorState.createEmpty());
     const contentState = editorState.getCurrentContent();
     const editorContainerRef = useRef<HTMLDivElement>(null);
@@ -149,6 +150,7 @@ const EditorContainer = ({ id, saveNote, content, editorButtonClass, editorClass
                     editorState={editorState}
                     onChange={setEditorState}
                     keyBindingFn={keyBindingFn}
+                    readOnly={lockEditor !== undefined && lockEditor}
                 />
             </div>
         </>

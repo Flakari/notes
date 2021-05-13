@@ -1,8 +1,8 @@
 import classes from "./NoteMenuItem.module.css";
 
 interface PropTypes {
-    children: string;
-    clickFunction?: () => void;
+    children: any;
+    clickFunction: () => void;
 }
 
 const NoteMenuItem = (props: PropTypes) => {
