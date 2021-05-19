@@ -67,7 +67,7 @@ const createNewNote = (state: State) => {
     const tempBoardsState = { ...state.boards };
     const notes = tempBoardsState[state.currentBoardId].notes;
     notes[id] = {
-        id, content: '', left: 0, top: 0, right: 0, bottom: 0, zIndex: newZIndex, color: '', locks: { editor: false, position: false, delete: false }
+        id, content: '', left: 20 + window.scrollX, top: 20 + window.scrollY, right: 0, bottom: 0, zIndex: newZIndex, color: '', locks: { editor: false, position: false, delete: false }
     };
 
     return tempBoardsState;

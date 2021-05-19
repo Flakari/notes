@@ -1,0 +1,11 @@
+.ConfirmationModal {
+    position: absolute;
+    font-size: 0.9em;
+    font-weight: bold;
+    border-radius: 3px;
+    padding: 5px;
+}
+
+.ConfirmationModal > button {
+    cursor: pointer;
+}

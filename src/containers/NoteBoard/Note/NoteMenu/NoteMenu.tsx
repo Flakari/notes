@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import classes from './NoteMenu.module.css';
 import NoteMenuItem from './NoteMenuItem/NoteMenuItem';
 import State from '../../../../store/combinedState';
+import ConfirmationModal from '../../../../components/ConfirmationModal/ConfirmationModal';
 
 const noteColors = [
     { name: 'Original', color: '' },
@@ -26,32 +27,47 @@ const NoteMenu = (props: PropTypes) => {
     const locks = useSelector((state: State) => state.board.boards[state.board.currentBoardId].notes[props.id].locks);
     const [showColorMenu, setShowColorMenu] = useState(false);
     const [showLockMenu, setShowLockMenu] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const handleClickEffects = (e: SyntheticEvent) => {
+        e.stopPropagation();
+        setShowDeleteModal(false);
+    }
 
     // Change Note color function
     const changeNoteColor = (color: string, e: SyntheticEvent) => {
-        e.stopPropagation();
+        handleClickEffects(e);
         dispatch({ type: 'CHANGE_NOTE_COLOR', noteId: props.id, color });
     };
 
     const toggleColorMenu = (e: SyntheticEvent) => {
-        e.stopPropagation();
+        handleClickEffects(e);
         setShowColorMenu(prevState => !prevState);
     };
 
     // Lock function, prevent note from moving and/or being deleted
     const lockToggle = (lockType: string, e: SyntheticEvent) => {
-        e.stopPropagation();
+        handleClickEffects(e);
         dispatch({ type: 'TOGGLE_NOTE_LOCK', noteId: props.id, lockType });
-    }
+    };
 
     const toggleLockMenu = (e: SyntheticEvent) => {
-        e.stopPropagation();
+        handleClickEffects(e);
         setShowLockMenu(prevState => !prevState);
     };
 
-    const deleteNote = (e: SyntheticEvent) => {
+    const deleteNoteCheck = (e: SyntheticEvent) => {
         e.stopPropagation();
         if (locks.delete) return;
+        setShowDeleteModal(prevState => !prevState);
+    };
+
+    const cancelDeletion = (e: SyntheticEvent) => {
+        e.stopPropagation();
+        setShowDeleteModal(false);
+    };
+
+    const confirmDeletion = () => {
         dispatch({ type: 'DELETE_NOTE', id: props.id });
     };
 
@@ -73,7 +89,17 @@ const NoteMenu = (props: PropTypes) => {
                     </NoteMenuItem>
                 ))}
             </div> : null}
-            <NoteMenuItem clickFunction={deleteNote} addedClasses={['delete', locks.delete ? 'disabled' : '']}>Delete</NoteMenuItem>
+            <NoteMenuItem clickFunction={deleteNoteCheck} addedClasses={['delete', locks.delete ? 'disabled' : '']}>Delete</NoteMenuItem>
+            {showDeleteModal ? (
+                <ConfirmationModal
+                    modalClass={classes.DeleteModal}
+                    bodyFunction={(e) => e.stopPropagation()}
+                    confirmFunction={confirmDeletion}
+                    cancelFunction={cancelDeletion}
+                >
+                    Confirm Note Deletion?
+                </ConfirmationModal>
+            ) : null}
         </div>
 
     );

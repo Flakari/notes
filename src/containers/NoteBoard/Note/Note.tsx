@@ -104,11 +104,11 @@ const Note = (props: PropTypes) => {
     const setEditorButtonClass = (right: number, top: number) => {
         const classList: string[] = [classes.NoteButtonContainer];
 
-        if (right > (window.innerWidth * 0.85)) {
+        if (right > ((window.innerWidth * 0.75) + window.scrollX)) {
             classList.push(classes.right);
         }
 
-        if (top < ((window.innerHeight - 105) * 0.1)) {
+        if (top < ((window.innerHeight - 105) * 0.1) + window.scrollY) {
             classList.push(classes.bottom);
         }
 
@@ -183,7 +183,7 @@ const Note = (props: PropTypes) => {
             />
             {showNoteMenuToggle ?
                 <button onClick={toggleNoteMenu} className={classes.NoteMenuButton}>
-                    <svg viewBox="0 0 515.555 515.555" xmlns="http://www.w3.org/2000/svg" aria-labelledby="menuTitle menuDesc" role="menu">
+                    <svg viewBox="0 0 515.555 515.555" aria-labelledby="menuTitle menuDesc" role="menu">
                         <title id="menuTitle">Note Menu Button</title>
                         <desc id="menuDesc">Opens menu for the corresponding note</desc>
                         <path d="M303.347 18.875c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0M303.347 212.209c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0M303.347 405.541c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0" />
