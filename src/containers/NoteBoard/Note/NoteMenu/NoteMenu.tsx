@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import classes from './NoteMenu.module.css';
@@ -28,24 +28,29 @@ const NoteMenu = (props: PropTypes) => {
     const [showLockMenu, setShowLockMenu] = useState(false);
 
     // Change Note color function
-    const changeNoteColor = (color: string) => {
+    const changeNoteColor = (color: string, e: SyntheticEvent) => {
+        e.stopPropagation();
         dispatch({ type: 'CHANGE_NOTE_COLOR', noteId: props.id, color });
     };
 
-    const toggleColorMenu = () => {
+    const toggleColorMenu = (e: SyntheticEvent) => {
+        e.stopPropagation();
         setShowColorMenu(prevState => !prevState);
     };
 
     // Lock function, prevent note from moving and/or being deleted
-    const lockToggle = (lockType: string) => {
+    const lockToggle = (lockType: string, e: SyntheticEvent) => {
+        e.stopPropagation();
         dispatch({ type: 'TOGGLE_NOTE_LOCK', noteId: props.id, lockType });
     }
 
-    const toggleLockMenu = () => {
+    const toggleLockMenu = (e: SyntheticEvent) => {
+        e.stopPropagation();
         setShowLockMenu(prevState => !prevState);
     };
 
-    const deleteNote = () => {
+    const deleteNote = (e: SyntheticEvent) => {
+        e.stopPropagation();
         if (locks.delete) return;
         dispatch({ type: 'DELETE_NOTE', id: props.id });
     };
@@ -55,7 +60,7 @@ const NoteMenu = (props: PropTypes) => {
             <NoteMenuItem clickFunction={toggleColorMenu}>Change Note Color</NoteMenuItem>
             {showColorMenu ? <div className={classes.NoteSubMenu}>
                 {noteColors.map(item => (
-                    <NoteMenuItem key={item.name} clickFunction={() => changeNoteColor(item.color)}>
+                    <NoteMenuItem key={item.name} clickFunction={(e) => changeNoteColor(item.color, e)} subMenuItem>
                         {item.name}
                     </NoteMenuItem>
                 ))}
@@ -63,12 +68,12 @@ const NoteMenu = (props: PropTypes) => {
             <NoteMenuItem clickFunction={toggleLockMenu}>Lock</NoteMenuItem>
             {showLockMenu ? <div className={classes.NoteSubMenu}>
                 {lockTypes.map(item => (
-                    <NoteMenuItem key={item} clickFunction={() => lockToggle(item)}>
+                    <NoteMenuItem key={item} clickFunction={(e) => lockToggle(item, e)} subMenuItem>
                         {locks[item] ? <div className={classes.LockMenuItem}><div className="fas fa-lock"></div><p>{item}</p></div> : item}
                     </NoteMenuItem>
                 ))}
             </div> : null}
-            <NoteMenuItem clickFunction={deleteNote}>Delete</NoteMenuItem>
+            <NoteMenuItem clickFunction={deleteNote} addedClasses={['delete', locks.delete ? 'disabled' : '']}>Delete</NoteMenuItem>
         </div>
 
     );

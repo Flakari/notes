@@ -1,16 +1,50 @@
 .NoteMenuItem {
+    background-color: white;
     cursor: pointer;
     border: none;
-    background: none;
     padding: 8px 10px;
+    border: 1px solid gray;
     border-bottom: 2px solid gray;
+    border-top: none;
     text-transform: capitalize;
 }
 
+.NoteMenuItem:first-of-type {
+    border-radius: 3px 3px 0 0;
+    border-top: 1px solid gray;
+}
+
 .NoteMenuItem:last-of-type {
-    border-bottom: none;
+    border-radius: 0 0 3px 3px;
+    border-bottom: 1px solid gray;
 }
 
 .NoteMenuItem:hover {
-    background-color: #dfdfdf;
+    background-color: #ececec;
+}
+
+.NoteMenuItem.NoteSubMenuItem {
+    border-radius: 0;
+}
+
+.NoteMenuItem.NoteSubMenuItem:first-of-type {
+    border-top: none;
+}
+
+.NoteMenuItem.NoteSubMenuItem:last-of-type {
+    border-bottom: none;
+}
+
+.NoteMenuItem.delete {
+    background-color: #ffb5b5;
+}
+
+.NoteMenuItem.delete:hover {
+    background-color: #ff6161;
+    color: white;
+}
+
+.NoteMenuItem.delete.disabled {
+    background-color: #dbdbdb;
+    color: #606060;
 }

@@ -32,17 +32,28 @@ const Note = (props: PropTypes) => {
     const [grabDivStyle, setGrabDivStyle] = useState(locks.position ? { cursor: 'default' } : { cursor: 'grab' });
     const dispatch = useDispatch();
     const [showEditorButtons, setShowEditorButtons] = useState(false);
+    const [showNoteMenuToggle, setShowNoteMenuToggle] = useState(false);
     const [showNoteMenu, setShowNoteMenu] = useState(false);
     const [editorButtonContainerClass, setEditorButtonContainerClass] = useState(classes.NoteButtonContainer);
 
-    useEffect(() => {
-        if (props.noteFocus.inFocus && props.noteFocus.id === note.id) {
+    const setEditorButtonState = useCallback(() => {
+        if (!locks.editor) {
             setShowEditorButtons(true);
         } else {
             setShowEditorButtons(false);
+        };
+    }, [locks.editor]);
+
+    useEffect(() => {
+        if (props.noteFocus.inFocus && props.noteFocus.id === note.id) {
+            setEditorButtonState();
+            setShowNoteMenuToggle(true);
+        } else {
+            setShowEditorButtons(false);
+            setShowNoteMenuToggle(false);
             setShowNoteMenu(false);
         }
-    }, [props.noteFocus, note.id]);
+    }, [props.noteFocus, note.id, locks.editor, setEditorButtonState]);
 
     useEffect(() => {
         if (locks.position) {
@@ -84,6 +95,7 @@ const Note = (props: PropTypes) => {
             if (left < 20) left = 20;
 
             setShowEditorButtons(false);
+            setShowNoteMenuToggle(false);
             setShowNoteMenu(false);
             setStyle({ ...style, left, top });
         }
@@ -138,6 +150,7 @@ const Note = (props: PropTypes) => {
     const clickHandler = (e: SyntheticEvent) => {
         e.stopPropagation();
         props.setNoteFocus({ id: note.id, inFocus: true });
+        if (showNoteMenu) setShowNoteMenu(false);
         zIndexHandler();
     };
 
@@ -168,7 +181,7 @@ const Note = (props: PropTypes) => {
                 editorButtonSelection='basic'
                 lockEditor={locks.editor}
             />
-            {showEditorButtons ?
+            {showNoteMenuToggle ?
                 <button onClick={toggleNoteMenu} className={classes.NoteMenuButton}>
                     <svg viewBox="0 0 515.555 515.555" xmlns="http://www.w3.org/2000/svg" aria-labelledby="menuTitle menuDesc" role="menu">
                         <title id="menuTitle">Note Menu Button</title>
