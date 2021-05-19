@@ -70,6 +70,12 @@ const NoteBoard = (props: PropTypes) => {
                     />
                 );
             })}
+            {Object.keys(notes).length === 0 ? (
+                <div id={classes.AddButtonArrowContainer}>
+                    <div id={classes.AddButtonArrowBody}>Add Note</div>
+                    <div id={classes.AddButtonArrow}></div>
+                </div>
+            ) : null}
             <button id={classes.AddButton} onClick={addNote} aria-label='Add Note'>+</button>
         </div>
     );

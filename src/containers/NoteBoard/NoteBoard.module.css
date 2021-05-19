@@ -21,3 +21,46 @@
     font-weight: 800;
     z-index: 2147483647; /* Maximum z-index */
 }
+
+#AddButtonArrowContainer {
+    animation: arrow-move 2s infinite;
+}
+
+@keyframes arrow-move {
+    0% {
+        transform: translateX(0%);
+    }
+
+    50% {
+        transform: translateX(-10%);
+    }
+
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+#AddButtonArrowContainer {
+    display: flex;
+    position: fixed;
+    bottom: 35px;
+    right: 75px;
+    --background-color: #111547;
+}
+
+#AddButtonArrowBody {
+    box-sizing: border-box;
+    padding: 5px 15px;
+    background-color: var(--background-color);
+    color: white;
+    height: 35px;
+    font-size: 1em;
+}
+
+#AddButtonArrow {
+    box-sizing: border-box;
+    height: 35px;
+    width: 35px;
+    border: calc(35px / 2) solid transparent;
+    border-left-color: var(--background-color);
+}

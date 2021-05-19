@@ -5,3 +5,9 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     text-overflow: ellipsis;
 }
+
+#TitleInput:focus-visible {
+    outline: 1px solid gray;
+    outline-offset: 2px;
+    border-radius: 2px;
+}

@@ -157,7 +157,7 @@ const Note = (props: PropTypes) => {
                 className={classes.NoteGrabContainer}
                 onMouseDown={dragStart}
                 style={grabDivStyle}
-            ><hr /></div>
+            ><div /></div>
             <EditorContainer
                 id={props.id}
                 content={note.content}

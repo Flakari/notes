@@ -10,33 +10,25 @@
     position: absolute;
     border-radius: 2px;
     box-shadow: #969583 -2px 2px 4px;
+    --grab-bar-color: #848415;
 }
 
 .Note.blue {
     background-color: #b6edff;
     color: #004196;
-}
-
-.Note.blue hr {
-    border-color: #7eb7ff;
+    --grab-bar-color: #226bc3;
 }
 
 .Note.green {
     background-color: #bbf2bb;
     color: #004600;
-}
-
-.Note.green hr {
-    border-color: #00b900;
+    --grab-bar-color: #008500;
 }
 
 .Note.pink {
     background-color: #ffe0e6;
     color: #9d0000;
-}
-
-.Note.pink hr {
-    border-color: #ff5c5c;
+    --grab-bar-color: #df4949;
 }
 
 .NoteEditorContainer {
@@ -48,11 +40,13 @@
 .NoteGrabContainer {
     display: flex;
     place-items: center;
+    justify-content: center;
 }
 
-.NoteGrabContainer > hr {
-    border-color: #b7b71c;
+.NoteGrabContainer > div {
     width: 90%;
+    height: 5%;
+    background-color: var(--grab-bar-color);
 }
 
 .NoteButtonContainer {
