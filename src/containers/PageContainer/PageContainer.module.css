@@ -1,12 +1,13 @@
 .PageEditorContainer {
     box-sizing: border-box;
     background: white;
-    width: 70%;
+    width: 90%;
+    max-width: 50em;
     margin: 0 auto;
     padding: 60px 45px;
     box-shadow: -3px 4px 10px rgba(0, 0, 0, 0.25);
     min-height: 50vh;
-    margin-top: 10px;
+    margin-top: 4em;
     cursor: text;
 }
 
@@ -14,5 +15,23 @@
     box-sizing: border-box;
     padding-top: 120px;
     background-color: #ebebeb;
-    min-width: 800px;
+}
+
+.PageEditorButtonContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    z-index: 2;
+    background-color: #808080;
+    padding: 30px 0 10px 0;
+    top: 85px;
+    border-radius: 0px 0px 10px 10px;
+    box-shadow: 0px -4px 6px 4px #00000080;
+}
+
+@media screen and (max-width: 700px) {
+    .PageEditorContainer {
+        width: 100%;
+    }
 }

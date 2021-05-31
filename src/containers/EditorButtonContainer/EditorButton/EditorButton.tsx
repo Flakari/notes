@@ -2,7 +2,7 @@ import { SyntheticEvent, useEffect, useState } from 'react';
 import { EditorState } from 'draft-js';
 
 import ColorContainer from '../../ColorContainer/ColorContainer';
-import classes from './EditorButton.module.css';
+import classes from '../../EditorButtonContainer/EditorButtonContainer.module.css';
 import data from '../../../colors.json';
 
 interface PropTypes {
@@ -55,7 +55,7 @@ const EditorButton = (props: PropTypes) => {
 
     let button = (
         <button
-            className={[classes.InlineButton, `fas fa-${props.icon}`, active ? classes.active : null].join(' ')}
+            className={[classes.EditorButton, `fas fa-${props.icon}`, active ? classes.active : null].join(' ')}
             onMouseDown={clickHandler}
             aria-label={props.type.toLowerCase()}
             style={style}
@@ -68,7 +68,7 @@ const EditorButton = (props: PropTypes) => {
                 {button}
                 <button
                     onMouseDown={() => props.showButton!(props.type)}
-                    className={classes.InlineSubButton}
+                    className={classes.EditorSubButton}
                     aria-label='Dropdown'
                 ><div></div></button>
                 {props.showValue ? <ColorContainer type={props.type} changeColor={props.fn} showButton={props.showButton!} /> : null}

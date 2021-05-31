@@ -36,7 +36,7 @@ export interface State {
 }
 
 const initialState: State = {
-    boards: localStorage.getItem('boards') ? JSON.parse(localStorage.getItem('boards') || '{}') : {},
+    boards: JSON.parse(localStorage.getItem('boards') || '{}'),
     showBoard: false,
     currentBoardId: ''
 };
@@ -63,11 +63,12 @@ interface ReducerActions extends BoardActions, NoteActions {
 
 const createNewNote = (state: State) => {
     const id = v4();
+    const BOARD_PADDING = 20;
     const newZIndex = state.boards[state.currentBoardId].maxZIndex + 1;
     const tempBoardsState = { ...state.boards };
     const notes = tempBoardsState[state.currentBoardId].notes;
     notes[id] = {
-        id, content: '', left: 20 + window.scrollX, top: 20 + window.scrollY, right: 0, bottom: 0, zIndex: newZIndex, color: '', locks: { editor: false, position: false, delete: false }
+        id, content: '', left: BOARD_PADDING + window.scrollX, top: BOARD_PADDING + window.scrollY, right: 0, bottom: 0, zIndex: newZIndex, color: '', locks: { editor: false, position: false, delete: false }
     };
 
     return tempBoardsState;

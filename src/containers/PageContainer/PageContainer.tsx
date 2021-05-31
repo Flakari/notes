@@ -19,7 +19,7 @@ const PageContainer = () => {
             <EditorContainer
                 id={id}
                 editorClass={classes.PageEditorContainer}
-                editorButtonClass={''}
+                editorButtonClass={classes.PageEditorButtonContainer}
                 saveNote={saveNote}
                 content={content}
                 editorButtonSelection='full'

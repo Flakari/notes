@@ -1,10 +1,12 @@
+import { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+
 import './App.css';
 import Header from './components/Header/Header';
 import PageContainer from './containers/PageContainer/PageContainer';
 import MenuContainer from './components/MenuContainer/MenuContainer';
 import NoteBoard from './containers/NoteBoard/NoteBoard';
 
-import { connect } from 'react-redux';
 
 interface PropTypes {
 	currentPageId: string;
@@ -13,9 +15,23 @@ interface PropTypes {
 	showBoard: boolean;
 };
 
-function App(props: PropTypes) {
+const App = (props: PropTypes) => {
+	const [appClasses, setAppClasses] = useState(['App'])
+
+	useEffect(() => {
+		const baseClass = ['App'];
+
+		if (props.showBoard) {
+			setAppClasses(baseClass.concat('Board'));
+		} else if (props.showEditor) {
+			setAppClasses(baseClass.concat('Page'));
+		} else {
+			setAppClasses(baseClass);
+		}
+	}, [props.showBoard, props.showEditor]);
+
 	return (
-		<div className="App">
+		<div className={appClasses.join(' ')}>
 			<Header />
 			<MenuContainer />
 			{(props.showEditor && props.currentPageId !== '') && <PageContainer key={props.currentPageId} />}

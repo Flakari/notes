@@ -2,6 +2,14 @@
   text-align: center;
 }
 
+.Board {
+  background-color: #d6d4bc;
+}
+
+.Page {
+  background-color: #ebebeb;
+}
+
 .public-DraftEditor-content {  
   caret-color: black;
 }

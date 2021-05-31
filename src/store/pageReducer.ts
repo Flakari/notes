@@ -16,9 +16,9 @@ export interface State {
 };
 
 const initialState: State = {
-    pages: localStorage.getItem('pages') ? JSON.parse(localStorage.getItem('pages') || '[]') : [],
+    pages: JSON.parse(localStorage.getItem('pages') || '[]'),
     currentPageId: '',
-    showEditor: !!localStorage.getItem('pages')
+    showEditor: false
 };
 
 const findPageIndex = (state: State, id: string): number => {
