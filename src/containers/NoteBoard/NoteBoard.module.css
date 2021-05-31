@@ -1,9 +1,9 @@
 #NoteBoard {
     position: relative;
-    box-sizing: border-box;
-    top: 105px;
+    top: 85px;
     background-color: #d6d4bc;
     z-index: 1;
+    padding-top: 20px;
 }
 
 #AddButton {

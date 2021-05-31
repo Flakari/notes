@@ -19,6 +19,13 @@ interface PropTypes {
     setNoteFocus: any;
 }
 
+interface NoteStyle {
+    zIndex: number,
+    top: number,
+    left: number,
+    width?: number
+}
+
 const Note = (props: PropTypes) => {
     const boardId = useSelector((state: State) => state.board.currentBoardId);
     const note = useSelector((state: State) => state.board.boards[boardId].notes[props.id]);
@@ -27,7 +34,7 @@ const Note = (props: PropTypes) => {
     const [focus, setFocus] = useState(false);
     const zIndex = useSelector(() => note.zIndex);
     const color = useSelector(() => note.color);
-    const [style, setStyle] = useState({ zIndex, top: props.top || 20, left: props.left || 20 });
+    const [style, setStyle] = useState<NoteStyle>({ zIndex, top: props.top || 20, left: props.left || 20 });
     const locks = useSelector(() => note.locks);
     const [grabDivStyle, setGrabDivStyle] = useState(locks.position ? { cursor: 'default' } : { cursor: 'grab' });
     const dispatch = useDispatch();
@@ -74,6 +81,7 @@ const Note = (props: PropTypes) => {
         setFocus(true);
         setGrabDivStyle({ cursor: 'grabbing' });
         zIndexHandler();
+        setStyle({ ...style, width: e.target.getBoundingClientRect().width });
     };
 
     const zIndexHandler = () => {
@@ -87,11 +95,11 @@ const Note = (props: PropTypes) => {
         if (locks.position) return;
 
         if (props.dragging && focus) {
-            const APP_MENU_HEIGHT = 105;
-            let top = e.screenY - diffY - APP_MENU_HEIGHT + window.scrollY;
+            const APP_MENU_HEIGHT_MINUS_PADDING = 85;
+            let top = e.screenY - diffY - APP_MENU_HEIGHT_MINUS_PADDING + window.scrollY;
             let left = e.screenX - diffX + window.scrollX;
 
-            if (top < 20) top = 20;
+            if (top < 40) top = 40;
             if (left < 20) left = 20;
 
             setShowEditorButtons(false);
@@ -117,6 +125,10 @@ const Note = (props: PropTypes) => {
 
     const dragEnd = (e: any) => {
         if (locks.position) return;
+
+        let tempStyle = { ...style }
+        delete tempStyle.width;
+        setStyle(tempStyle);
 
         let right = e.currentTarget.getBoundingClientRect().right + window.scrollX;
         let bottom = e.currentTarget.getBoundingClientRect().bottom + window.scrollY;
