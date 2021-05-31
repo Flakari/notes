@@ -49,8 +49,14 @@ const EditorButtonContainer = (props: PropTypes) => {
     const [showHighlightColor, setShowHighlightColor] = useState(false);
     const [inlineStyles, setInlineStyles] = useState<ButtonStyle[]>([]);
     const [blockStyles, setBlockStyles] = useState<ButtonStyle[]>([]);
+    const [utilityButtons, setUtilityButtons] = useState<ButtonStyle[]>([]);
 
     useEffect(() => {
+        const utility: ButtonStyle[] = [
+            { icon: 'undo-alt', type: 'UNDO', btnType: 'button' },
+            { icon: 'redo-alt', type: 'REDO', btnType: 'button' }
+        ];
+
         const basicInlineStyles: ButtonStyle[] = [
             { icon: 'bold', type: 'BOLD', btnType: 'button' },
             { icon: 'italic', type: 'ITALIC', btnType: 'button' },
@@ -80,6 +86,7 @@ const EditorButtonContainer = (props: PropTypes) => {
             { icon: 'remove-format', type: 'unstyled', btnType: 'button' },
         ];
 
+        setUtilityButtons(utility);
         setInlineStyles(() => props.editorButtonSelection === 'basic' ? basicInlineStyles : fullInlineStyles);
         setBlockStyles(() => props.editorButtonSelection === 'basic' ? basicBlockStyles : fullBlockStyles);
     }, [props.editorButtonSelection]);
@@ -173,6 +180,27 @@ const EditorButtonContainer = (props: PropTypes) => {
         props.removeComponentLoadedState();
     };
 
+    const onUndo = () => {
+        props.setEditorState(EditorState.undo(props.editorState));
+    };
+
+    const onRedo = () => {
+        props.setEditorState(EditorState.redo(props.editorState));
+    };
+
+    const utilityButton = (btnStyle: ButtonStyle) => {
+        return (
+            <EditorButton
+                key={btnStyle.type}
+                type={btnStyle.type}
+                icon={btnStyle.icon}
+                fn={btnStyle.type === 'UNDO' ? onUndo : onRedo}
+                editorState={props.editorState}
+                styleType={'inline'}
+            />
+        );
+    };
+
     const inlineButton = (btnStyle: ButtonStyle) => {
         const fn = 'color' in btnStyle ? colorChange :
             btnStyle.type === 'SUPERSCRIPT' || btnStyle.type === 'SUBSCRIPT' ? changeScriptAlignment : onInlineStyleClick;
@@ -195,6 +223,7 @@ const EditorButtonContainer = (props: PropTypes) => {
 
     return (
         <div className={[classes.ButtonContainer, props.editorButtonClass].join(' ')}>
+            {utilityButtons.map(style => utilityButton(style))}
             {inlineStyles.map(style => {
                 return style.btnType === 'button' ?
                     inlineButton(style) : (
