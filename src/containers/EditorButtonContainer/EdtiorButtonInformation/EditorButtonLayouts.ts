@@ -1,6 +1,6 @@
 import * as btnInfo from './EditorButtonInfo';
 
-interface CategoryLayout {
+export interface CategoryLayout {
     categoryName: string;
     icon: string;
     contents: btnInfo.Style[];
@@ -35,9 +35,14 @@ export const fullBlockLayout = [
     ...basicBlockLayout, btnInfo.blockQuote, btnInfo.code, btnInfo.unstyled
 ];
 
+export const basicOveralLayout = [
+    ...utility, ...basicInlineLayout, ...basicBlockLayout
+];
+
 export const fullOverallLayout = [
     ...utility, ...fullInlineLayout, ...selectLayout, ...fullBlockLayout
 ];
+
 
 // Compact Category Layouts
 
@@ -72,5 +77,5 @@ export const smallCompactLayout = [
 ];
 
 export const mediumCompactLayout = [
-    ...utility, basicInlineLayout, colorsCategory, sizeCategory, blockCategory
+    ...utility, ...basicInlineLayout, colorsCategory, sizeCategory, blockCategory
 ];

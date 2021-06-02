@@ -4,6 +4,7 @@ import colorData from '../../colors.json';
 import fontSizes from '../../font-sizes.json';
 import EditorButtonContainer from '../EditorButtonContainer/EditorButtonContainer';
 import 'draft-js/dist/Draft.css';
+import { Style } from '../EditorButtonContainer/EdtiorButtonInformation/EditorButtonInfo';
 
 interface PropTypes {
     id: string;
@@ -12,7 +13,7 @@ interface PropTypes {
     editorButtonClass: string;
     editorClass: string;
     showButtons?: boolean;
-    editorButtonSelection: 'basic' | 'full';
+    editorButtonSelection: Style[];
     lockEditor?: boolean;
 }
 

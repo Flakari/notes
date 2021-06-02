@@ -5,6 +5,7 @@ import EditorContainer from '../../EditorContainer/EditorContainer';
 import classes from "./Note.module.css";
 import State from '../../../store/combinedState';
 import NoteMenu from './NoteMenu/NoteMenu';
+import { basicOveralLayout } from '../../EditorButtonContainer/EdtiorButtonInformation/EditorButtonLayouts';
 
 interface PropTypes {
     setDraggingState: (state: boolean) => void;
@@ -190,7 +191,7 @@ const Note = (props: PropTypes) => {
                 editorClass={classes.NoteEditorContainer}
                 saveNote={saveNote}
                 showButtons={showEditorButtons}
-                editorButtonSelection='basic'
+                editorButtonSelection={basicOveralLayout}
                 lockEditor={locks.editor}
             />
             {showNoteMenuToggle ?

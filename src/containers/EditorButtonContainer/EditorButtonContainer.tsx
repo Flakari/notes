@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { EditorState, RichUtils, Modifier } from 'draft-js';
 
 import colorData from '../../colors.json';
@@ -6,8 +6,9 @@ import fontSizes from '../../font-sizes.json';
 import classes from './EditorButtonContainer.module.css';
 import EditorButton from './EditorButton/EditorButton';
 import EditorDropdown from './EditorDropdown/EditorDropdown';
-import * as buttonLayouts from './EdtiorButtonInformation/EditorButtonLayouts';
+import EditorCategory from './EditorCategory/EditorCategory';
 import { Style as ButtonStyle } from './EdtiorButtonInformation/EditorButtonInfo';
+import { CategoryLayout } from './EdtiorButtonInformation/EditorButtonLayouts';
 
 interface PropTypes {
     editorState: EditorState;
@@ -15,7 +16,7 @@ interface PropTypes {
     contentState: any;
     removeComponentLoadedState: () => void;
     editorButtonClass: string;
-    editorButtonSelection: 'basic' | 'full';
+    editorButtonSelection: (ButtonStyle | CategoryLayout)[];
 }
 
 const textColorArr: string[] = [];
@@ -41,17 +42,6 @@ const DEFAULT_TEXT_SIZE = 16;
 const EditorButtonContainer = (props: PropTypes) => {
     const [showTextColor, setShowTextColor] = useState(false);
     const [showHighlightColor, setShowHighlightColor] = useState(false);
-    const [inlineStyles, setInlineStyles] = useState<ButtonStyle[]>([]);
-    const [selectStyles, setSelectStyles] = useState<ButtonStyle[]>([]);
-    const [blockStyles, setBlockStyles] = useState<ButtonStyle[]>([]);
-    const [utilityButtons, setUtilityButtons] = useState<ButtonStyle[]>([]);
-
-    useEffect(() => {
-        setUtilityButtons(buttonLayouts.utility);
-        setInlineStyles(() => props.editorButtonSelection === 'basic' ? buttonLayouts.basicInlineLayout : buttonLayouts.fullInlineLayout);
-        setSelectStyles(() => props.editorButtonSelection === 'full' ? buttonLayouts.selectLayout : []);
-        setBlockStyles(() => props.editorButtonSelection === 'basic' ? buttonLayouts.basicBlockLayout : buttonLayouts.fullBlockLayout);
-    }, [props.editorButtonSelection]);
 
     const showButton = (type: string) => {
         if (type === 'TEXTCOLOR') {
@@ -153,12 +143,12 @@ const EditorButtonContainer = (props: PropTypes) => {
     const utilityButton = (btnStyle: ButtonStyle) => {
         return (
             <EditorButton
-                key={btnStyle.type}
-                type={btnStyle.type}
+                key={btnStyle.name}
+                type={btnStyle.name}
                 icon={btnStyle.icon}
                 fn={btnStyle.name === 'UNDO' ? onUndo : onRedo}
                 editorState={props.editorState}
-                styleType={'inline'}
+                styleType={btnStyle.type}
             />
         );
     };
@@ -183,45 +173,63 @@ const EditorButtonContainer = (props: PropTypes) => {
         );
     };
 
+    const selectStyle = (style: ButtonStyle) => {
+        let fn, options, defaultValue;
+        if (style.type === 'inline') {
+            fn = fontSizeChange;
+            options = fontSizes.sizes;
+            defaultValue = DEFAULT_TEXT_SIZE.toString();
+        } else {
+            fn = onBlockStyleClick;
+            options = headers;
+            defaultValue = 'headerone'
+        }
+
+        return (
+            <EditorDropdown
+                key={style.name}
+                options={options}
+                fn={fn}
+                type={style.name}
+                default={defaultValue}
+                editorState={props.editorState}
+                styleType={style.type}
+            />
+        );
+    };
+
+    const blockButton = (style: ButtonStyle) => {
+        return (
+            <EditorButton
+                key={style.name}
+                type={style.name}
+                icon={style.icon}
+                fn={onBlockStyleClick}
+                editorState={props.editorState}
+                styleType='block'
+            />
+        );
+    };
+
+    const buttonStyles = (style: ButtonStyle) => {
+        if (style.type === 'utility') return utilityButton(style);
+        if (style.btnType === 'select') return selectStyle(style);
+        if (style.type === 'inline') return inlineButton(style);
+        return blockButton(style);
+    }
+
     return (
         <div className={[classes.ButtonContainer, props.editorButtonClass].join(' ')}>
-            {utilityButtons.map(style => utilityButton(style))}
-            {inlineStyles.map(style => inlineButton(style))}
-            {selectStyles.map(style => {
-                let fn, options, defaultValue;
-                if (style.type === 'inline') {
-                    fn = fontSizeChange;
-                    options = fontSizes.sizes;
-                    defaultValue = DEFAULT_TEXT_SIZE.toString();
+            {props.editorButtonSelection.map(style => {
+                if ('categoryName' in style) {
+                    return (
+                        <EditorCategory name={style.categoryName} icon={style.icon}>
+                            {style.contents.map(btnStyle => buttonStyles(btnStyle))}
+                        </EditorCategory>
+                    );
                 } else {
-                    fn = onBlockStyleClick;
-                    options = headers;
-                    defaultValue = 'headerone'
+                    return buttonStyles(style);
                 }
-
-                return (
-                    <EditorDropdown
-                        key={style.name}
-                        options={options}
-                        fn={fn}
-                        type={style.name}
-                        default={defaultValue}
-                        editorState={props.editorState}
-                        styleType={style.type}
-                    />
-                );
-            })}
-            {blockStyles.map(style => {
-                return (
-                    <EditorButton
-                        key={style.name}
-                        type={style.name}
-                        icon={style.icon}
-                        fn={onBlockStyleClick}
-                        editorState={props.editorState}
-                        styleType='block'
-                    />
-                );
             })}
         </div>
     );
