@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 
-import State from '../../store/combinedState';
+import State from '../../../store/combinedState';
+import AddButton from '../AddButton/AddButton';
 
 interface PropTypes {
     props: { containerToggle: () => void };
@@ -17,10 +18,6 @@ const BoardMenu = (props: PropTypes) => {
         dispatch({ type: 'HIDE_PAGE' });
     };
 
-    const createBoard = () => {
-        dispatch({ type: 'CREATE_BOARD' });
-    };
-
     return (
         <div>
             <ul>
@@ -33,7 +30,7 @@ const BoardMenu = (props: PropTypes) => {
                     );
                 })}
             </ul>
-            <button onClick={createBoard}>Create New Board</button>
+            <AddButton type='Board' />
         </div>
     );
 };

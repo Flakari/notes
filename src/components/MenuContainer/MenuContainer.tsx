@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react';
 import { Transition } from 'react-transition-group';
 
-import PageMenu from '../PageMenu/PageMenu';
-import BoardMenu from '../BoardMenu/BoardMenu';
+import PageMenu from './PageMenu/PageMenu';
+import BoardMenu from './BoardMenu/BoardMenu';
 import classes from './MenuContainer.module.css';
 
 const MenuContainer = () => {

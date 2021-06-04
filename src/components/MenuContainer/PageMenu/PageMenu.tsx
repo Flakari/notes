@@ -1,7 +1,8 @@
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import { Page } from '../../store/pageReducer';
+import { Page } from '../../../store/pageReducer';
+import AddButton from '../AddButton/AddButton';
 import classes from './PageMenu.module.css';
 
 interface PropTypes {
@@ -32,8 +33,8 @@ const PageMenu = (props: PropTypes) => {
                     );
                 })}
             </ul>
+            <AddButton type='Page' />
         </div>
-
     );
 };
 
