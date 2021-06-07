@@ -30,7 +30,7 @@
     position: fixed;
     z-index: 11;
     height: 300px;
-    background-color: grey;
+    background-color: #d0d0d0;
     top: -225px;
     transition: transform 0.5s ease-in;
     box-shadow: inset 0px 2px 4px #00000040;

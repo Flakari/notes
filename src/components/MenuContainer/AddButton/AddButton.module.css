@@ -1,5 +1,4 @@
 .AddButton {
-    position: fixed;
     background-color: #ff1654;
     color: white;
     font-size: 0.9em;
@@ -8,8 +7,6 @@
     cursor: pointer;
     height: 40px;
     width: 105px;
-    right: 100px;
-    top: 0;
 }
 
 .AddButton:hover {

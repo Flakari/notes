@@ -66,21 +66,10 @@
 }
 
 .NoteMenuButton {
-    position: absolute;
-    cursor: pointer;
     top: 0;
     left: -45px;
-    width: 45px;
-    padding: 10px;
-    background: none;
-    border: none;
 }
 
 .NoteMenuButton > svg {
     fill: #70704d;
-    width: 100%;
-}
-
-.NoteMenuButton:hover > svg {
-    fill: black;
 }

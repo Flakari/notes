@@ -1,0 +1,16 @@
+.OpenMenuButton {
+    position: absolute;
+    cursor: pointer;
+    width: 45px;
+    padding: 10px;
+    background: none;
+    border: none;
+}
+    
+.OpenMenuButton > svg {
+    width: 100%;
+}
+
+.OpenMenuButton:hover > svg {
+    fill: black;
+}

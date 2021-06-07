@@ -6,6 +6,7 @@ import classes from "./Note.module.css";
 import State from '../../../store/combinedState';
 import NoteMenu from './NoteMenu/NoteMenu';
 import { basicOveralLayout } from '../../EditorButtonContainer/EdtiorButtonInformation/EditorButtonLayouts';
+import OpenMenuButton from '../../../components/OpenMenuButton/OpenMenuButton';
 
 interface PropTypes {
     setDraggingState: (state: boolean) => void;
@@ -194,15 +195,7 @@ const Note = (props: PropTypes) => {
                 editorButtonSelection={basicOveralLayout}
                 lockEditor={locks.editor}
             />
-            {showNoteMenuToggle ?
-                <button onClick={toggleNoteMenu} className={classes.NoteMenuButton}>
-                    <svg viewBox="0 0 515.555 515.555" aria-labelledby="menuTitle menuDesc" role="menu">
-                        <title id="menuTitle">Note Menu Button</title>
-                        <desc id="menuDesc">Opens menu for the corresponding note</desc>
-                        <path d="M303.347 18.875c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0M303.347 212.209c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0M303.347 405.541c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0" />
-                    </svg>
-                </button> : null
-            }
+            {showNoteMenuToggle ? <OpenMenuButton click={toggleNoteMenu} menuClass={classes.NoteMenuButton} /> : null}
             {showNoteMenu ? <NoteMenu id={props.id} hideMenu={() => setShowNoteMenu(false)} /> : null}
         </div>
     );

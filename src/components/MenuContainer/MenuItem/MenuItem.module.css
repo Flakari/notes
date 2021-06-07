@@ -1,0 +1,65 @@
+.MenuItem {
+    position: relative;
+    width: 200px;
+    height: 180px;
+    display: flex;
+    place-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 8px 21px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.MenuItem:hover {
+    background: #b3b3b3;
+}
+
+.MenuItemImage {
+    height: 110px;
+    width: 80px;
+    background-color: white;
+    box-shadow: -2px 2px 3px #999;
+    margin-top: 5px;
+}
+
+.MenuItem > p {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
+    margin: 10px 0px;
+}
+
+.MenuItemButton {
+    top: 0;
+    left: -90px;
+    display: none;
+}
+.MenuItemButton > svg {
+    fill: #717171;
+}
+
+.MenuItem:hover .MenuItemButton {
+    display: block;
+}
+
+.SubMenu {
+    display: none;
+    position: absolute;
+    background-color: white;
+    padding: 5px 25px;
+    top: 60px;
+    left: -25px;
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+
+.SubMenu:hover {
+    background-color: #ececec;
+}
+
+.MenuItem:hover .SubMenu {
+    display: block;
+}

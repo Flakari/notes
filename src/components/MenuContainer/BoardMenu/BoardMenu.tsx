@@ -4,7 +4,7 @@ import State from '../../../store/combinedState';
 import AddButton from '../AddButton/AddButton';
 
 interface PropTypes {
-    props: { containerToggle: () => void };
+    toggle: () => void;
 }
 
 const BoardMenu = (props: PropTypes) => {
@@ -13,7 +13,7 @@ const BoardMenu = (props: PropTypes) => {
     const dispatch = useDispatch();
 
     const clickHandler = (id: string) => {
-        props.props.containerToggle();
+        props.toggle();
         dispatch({ type: 'SHOW_BOARD', id });
         dispatch({ type: 'HIDE_PAGE' });
     };

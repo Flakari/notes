@@ -36,10 +36,6 @@ const MenuContainer = () => {
         setShowFull(prevState => !prevState);
     };
 
-    const props = {
-        containerToggle
-    };
-
     return (
         <>
             <Transition in={showFull} timeout={duration} nodeRef={containerRef}>
@@ -49,7 +45,7 @@ const MenuContainer = () => {
                             <button className={showPagesMenu ? classes.active : undefined} onClick={showPages}>Pages</button>
                             <button className={!showPagesMenu ? classes.active : undefined} onClick={showBoard}>Board</button>
                         </div>
-                        {showPagesMenu ? <PageMenu props={props} /> : <BoardMenu props={props} />}
+                        {showPagesMenu ? <PageMenu toggle={containerToggle} /> : <BoardMenu toggle={containerToggle} />}
                     </div>
                 )}
             </Transition>
