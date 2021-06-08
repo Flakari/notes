@@ -16,10 +16,19 @@
     background: #b3b3b3;
 }
 
-.MenuItemImage {
+.MenuPageImage {
     height: 110px;
     width: 80px;
     background-color: white;
+}
+
+.MenuBoardImage {
+    height: 90px;
+    width: 130px;
+    background-color: #f7f7d0;
+}
+
+.MenuPageImage, .MenuBoardImage {
     box-shadow: -2px 2px 3px #999;
     margin-top: 5px;
 }
@@ -34,7 +43,7 @@
 
 .MenuItemButton {
     top: 0;
-    left: -90px;
+    left: -40px;
     display: none;
 }
 .MenuItemButton > svg {
@@ -50,7 +59,7 @@
     position: absolute;
     background-color: white;
     padding: 5px 25px;
-    top: 60px;
+    top: 45px;
     left: -25px;
     border: 1px solid gray;
     border-radius: 5px;

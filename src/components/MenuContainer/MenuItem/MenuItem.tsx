@@ -8,6 +8,7 @@ interface PropTypes {
     title: string;
     click: () => void;
     delete: { type: string, id: string };
+    type: 'page' | 'board';
 }
 
 const MenuItem = (props: PropTypes) => {
@@ -30,7 +31,7 @@ const MenuItem = (props: PropTypes) => {
 
     return (
         <div onMouseLeave={closeMenu} className={classes.MenuItem} onClick={props.click}>
-            <div className={classes.MenuItemImage}></div>
+            <div className={props.type === 'page' ? classes.MenuPageImage : classes.MenuBoardImage}></div>
             <p>{props.title}</p>
             <OpenMenuButton menuClass={classes.MenuItemButton} click={toggleMenu} />
             {showMenu ? <div onClick={deleteItem} className={classes.SubMenu}>Delete</div> : null}

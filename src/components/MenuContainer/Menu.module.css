@@ -1,9 +1,9 @@
-#PageMenu {
-    padding: 10px;
+.Menu {
+    padding: 10px 40px;
     overflow-y: auto;
 }
 
-#PageMenu > ul {
+.Menu > ul {
     display: flex;
     width: 100%;
     padding: 0;
@@ -13,11 +13,11 @@
     margin: 0;
 }
 
-#PageMenu button {
-    margin: 15px 47.5px;
+.Menu ul > button {
+    margin: 70px 47.5px;
 }
 
-#PageMenu li {
+.Menu li {
     flex-basis: 200px;
     list-style: none;
 }
@@ -25,4 +25,14 @@
 .btn {
     display: inline-block;
     margin-left: 10px;
+}
+
+@media screen and (max-width: 625px) {
+    .Menu ul {
+        flex-direction: column;
+    }
+
+    .Menu ul > button {
+        margin: 20px 47.5px;
+    }
 }

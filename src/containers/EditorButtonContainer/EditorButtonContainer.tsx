@@ -223,7 +223,7 @@ const EditorButtonContainer = (props: PropTypes) => {
             {props.editorButtonSelection.map(style => {
                 if ('categoryName' in style) {
                     return (
-                        <EditorCategory name={style.categoryName} icon={style.icon}>
+                        <EditorCategory key={style.categoryName} name={style.categoryName} icon={style.icon}>
                             {style.contents.map(btnStyle => buttonStyles(btnStyle))}
                         </EditorCategory>
                     );

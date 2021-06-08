@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import State from '../../../store/combinedState';
 import AddButton from '../AddButton/AddButton';
 import MenuItem from '../MenuItem/MenuItem';
-import classes from './PageMenu.module.css';
+import classes from '../Menu.module.css';
 
 interface PropTypes {
     toggle: () => void;
@@ -21,7 +21,7 @@ const PageMenu = (props: PropTypes) => {
     };
 
     return (
-        <div id={classes.PageMenu}>
+        <div className={classes.Menu}>
             <ul>
                 <AddButton type='Page' />
                 {pages.filter(item => item.id !== currentPageId).map(item => {
@@ -31,6 +31,7 @@ const PageMenu = (props: PropTypes) => {
                                 title={item.title || 'Untitled'}
                                 click={() => itemClickHandler(item.id)}
                                 delete={{ type: 'DELETE_PAGE', id: item.id }}
+                                type='page'
                             />
                         </li>
                     );
