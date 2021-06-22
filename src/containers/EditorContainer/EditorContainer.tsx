@@ -72,9 +72,14 @@ const EditorContainer = ({ id, saveNote, content, editorButtonClass, editorClass
 
     // Allows save message to appear after a key has been pressed in the editing container
     useEffect(() => {
-        editorContainerRef.current?.addEventListener('keydown', () => {
-            setAppStart(false);
-        });
+        const setAppState = () => setAppStart(false);
+        const ref = editorContainerRef.current;
+
+        ref!.addEventListener('keydown', setAppState);
+
+        return () => {
+            ref!.removeEventListener('keydown', setAppState);
+        }
     }, []);
 
     // Removes save message a few seconds after saving

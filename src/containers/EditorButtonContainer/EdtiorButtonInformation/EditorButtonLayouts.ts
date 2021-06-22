@@ -35,7 +35,7 @@ export const fullBlockLayout = [
     ...basicBlockLayout, btnInfo.blockQuote, btnInfo.code, btnInfo.unstyled
 ];
 
-export const basicOveralLayout = [
+export const basicOverallLayout = [
     ...utility, ...basicInlineLayout, ...basicBlockLayout
 ];
 

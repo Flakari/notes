@@ -27,8 +27,14 @@ const PageContainer = () => {
     };
 
     useEffect(() => {
-        setLayout(checkWindowWidth(window.innerWidth));
-        window.addEventListener('resize', () => setLayout(checkWindowWidth(window.innerWidth)));
+        const setLayoutWidth = () => setLayout(checkWindowWidth(window.innerWidth));
+
+        setLayoutWidth();
+        window.addEventListener('resize', setLayoutWidth);
+
+        return () => {
+            window.removeEventListener('resize', setLayoutWidth);
+        }
     }, []);
 
     const saveNote = useCallback((id: string, content: string) => {

@@ -5,7 +5,7 @@ import EditorContainer from '../../EditorContainer/EditorContainer';
 import classes from "./Note.module.css";
 import State from '../../../store/combinedState';
 import NoteMenu from './NoteMenu/NoteMenu';
-import { basicOveralLayout } from '../../EditorButtonContainer/EdtiorButtonInformation/EditorButtonLayouts';
+import { basicOverallLayout } from '../../EditorButtonContainer/EdtiorButtonInformation/EditorButtonLayouts';
 import OpenMenuButton from '../../../components/OpenMenuButton/OpenMenuButton';
 
 interface PropTypes {
@@ -96,19 +96,17 @@ const Note = (props: PropTypes) => {
     const onDrag = (e: any) => {
         if (locks.position) return;
 
-        if (props.dragging && focus) {
-            const APP_MENU_HEIGHT_MINUS_PADDING = 85;
-            let top = e.screenY - diffY - APP_MENU_HEIGHT_MINUS_PADDING + window.scrollY;
-            let left = e.screenX - diffX + window.scrollX;
+        const APP_MENU_HEIGHT_MINUS_PADDING = 85;
+        let top = e.screenY - diffY - APP_MENU_HEIGHT_MINUS_PADDING + window.scrollY;
+        let left = e.screenX - diffX + window.scrollX;
 
-            if (top < 40) top = 40;
-            if (left < 20) left = 20;
+        if (top < 40) top = 40;
+        if (left < 20) left = 20;
 
-            setShowEditorButtons(false);
-            setShowNoteMenuToggle(false);
-            setShowNoteMenu(false);
-            setStyle({ ...style, left, top });
-        }
+        setShowEditorButtons(false);
+        setShowNoteMenuToggle(false);
+        setShowNoteMenu(false);
+        setStyle({ ...style, left, top });
     };
 
     const setEditorButtonClass = (right: number, top: number) => {
@@ -123,24 +121,21 @@ const Note = (props: PropTypes) => {
         }
 
         setEditorButtonContainerClass(classList.join(' '));
-    }
+    };
 
-    const dragEnd = (e: any) => {
-        if (locks.position) return;
-
+    const removeNoteWidth = () => {
         let tempStyle = { ...style }
         delete tempStyle.width;
         setStyle(tempStyle);
+    };
 
-        let right = e.currentTarget.getBoundingClientRect().right + window.scrollX;
-        let bottom = e.currentTarget.getBoundingClientRect().bottom + window.scrollY;
-
-        setEditorButtonClass(right - window.scrollX, style.top);
-
+    const setNoteStates = () => {
         setFocus(false);
         props.setDraggingState(false);
         setGrabDivStyle({ cursor: 'grab' });
+    };
 
+    const checkAndUpdateBoardSize = (right: number, bottom: number) => {
         if (bottom >= props.containerHeight + 80) {
             dispatch({ type: 'UPDATE_BOARD_SIZE', direction: 'height', size: bottom - 80 });
         }
@@ -148,13 +143,30 @@ const Note = (props: PropTypes) => {
         if (right >= props.containerWidth - 20) {
             dispatch({ type: 'UPDATE_BOARD_SIZE', direction: 'width', size: right + 20 });
         }
+    };
 
+    const checkAndUpdateNotePosition = (right: number, bottom: number) => {
         const noteMoved = style.left !== note.left || style.top !== note.top || right !== note.right || bottom !== note.bottom;
 
         if (noteMoved) {
             const position = { left: style.left, top: style.top, right, bottom };
             dispatch({ type: 'UPDATE_NOTE_POSITION', noteId: props.id, position });
         }
+    };
+
+    const dragEnd = (e: any) => {
+        if (locks.position) return;
+
+        let right = e.currentTarget.getBoundingClientRect().right + window.scrollX;
+        let bottom = e.currentTarget.getBoundingClientRect().bottom + window.scrollY;
+
+        removeNoteWidth();
+        setEditorButtonClass(right - window.scrollX, style.top);
+
+        setNoteStates();
+
+        checkAndUpdateBoardSize(right, bottom);
+        checkAndUpdateNotePosition(right, bottom);
     };
 
     const saveNote = useCallback((id: string, content: string) => {
@@ -176,7 +188,7 @@ const Note = (props: PropTypes) => {
         <div
             className={[classes.Note, classes[color]].join(' ')}
             style={style}
-            onMouseMove={onDrag}
+            {...(props.dragging && focus && { onMouseMove: onDrag })}
             onMouseUp={dragEnd}
             onClick={clickHandler}
         >
@@ -192,7 +204,7 @@ const Note = (props: PropTypes) => {
                 editorClass={classes.NoteEditorContainer}
                 saveNote={saveNote}
                 showButtons={showEditorButtons}
-                editorButtonSelection={basicOveralLayout}
+                editorButtonSelection={basicOverallLayout}
                 lockEditor={locks.editor}
             />
             {showNoteMenuToggle ? <OpenMenuButton click={toggleNoteMenu} menuClass={classes.NoteMenuButton} /> : null}
