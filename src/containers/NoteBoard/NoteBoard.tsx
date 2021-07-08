@@ -10,25 +10,16 @@ interface PropTypes {
     id: string;
 }
 
-type boardDimensions = {
+type BoardDimensions = {
     height: number | string;
     width: number | string;
 }
 
 const NoteBoard = (props: PropTypes) => {
-    const [dragging, setDragging] = useState(false);
-    const zIndex = useSelector((state: State) => state.board.boards[props.id].maxZIndex);
-    const width = useSelector((state: State) => state.board.boards[props.id].width);
-    const height = useSelector((state: State) => state.board.boards[props.id].height);
-    const [style, setStyle] = useState<boardDimensions>({ width: width, height: height });
+    const { maxZIndex, width, height, notes } = useSelector((state: State) => state.board.boards[props.id]);
+    const [style, setStyle] = useState<BoardDimensions>({ width: width, height: height });
     const dispatch = useDispatch();
-    const notes = useSelector((state: State) => state.board.boards[props.id].notes);
-    const keys = useSelector(() => Object.keys(notes));
     const [noteFocus, setNoteFocus] = useState({ id: '', inFocus: false });
-
-    const setDraggingState = (value: boolean) => {
-        setDragging(value);
-    };
 
     useEffect(() => {
         const HEADER_HEIGHT = 105;
@@ -48,23 +39,29 @@ const NoteBoard = (props: PropTypes) => {
 
     const addNote = () => {
         dispatch({ type: 'CREATE_NOTE' });
-        dispatch({ type: 'UPDATE_BOARD_ZINDEX', zIndex: zIndex + 1 });
+        dispatch({ type: 'UPDATE_BOARD_ZINDEX', zIndex: maxZIndex + 1 });
+    };
+
+    const checkAndUpdateBoardSize = (right: number, bottom: number) => {
+        if (bottom >= height + 80) {
+            dispatch({ type: 'UPDATE_BOARD_SIZE', direction: 'height', size: bottom - 80 });
+        }
+
+        if (right >= width - 20) {
+            dispatch({ type: 'UPDATE_BOARD_SIZE', direction: 'width', size: right + 20 });
+        }
     };
 
     return (
         <div id={classes.NoteBoard} style={style} onClick={() => setNoteFocus({ id: '', inFocus: false })}>
-            {keys.map(item => {
+            {Object.keys(notes).map(item => {
                 return (
                     <Note
                         key={notes[item].id}
                         id={notes[item].id}
-                        left={notes[item].left}
-                        top={notes[item].top}
-                        dragging={dragging}
-                        setDraggingState={setDraggingState}
-                        zIndex={zIndex}
-                        containerWidth={width}
-                        containerHeight={height}
+                        boardId={props.id}
+                        boardZIndex={maxZIndex}
+                        checkAndUpdateBoardSize={checkAndUpdateBoardSize}
                         noteFocus={noteFocus}
                         setNoteFocus={setNoteFocus}
                     />

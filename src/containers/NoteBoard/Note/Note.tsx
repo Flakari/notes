@@ -9,14 +9,10 @@ import { basicOverallLayout } from '../../EditorButtonContainer/EdtiorButtonInfo
 import OpenMenuButton from '../../../components/OpenMenuButton/OpenMenuButton';
 
 interface PropTypes {
-    setDraggingState: (state: boolean) => void;
-    zIndex: number;
-    containerWidth: number;
-    containerHeight: number;
-    dragging: boolean;
+    boardZIndex: number;
+    checkAndUpdateBoardSize: (right: number, bottom: number) => void;
     id: string;
-    top: number;
-    left: number;
+    boardId: string;
     noteFocus: { id: string, inFocus: boolean };
     setNoteFocus: any;
 }
@@ -29,15 +25,11 @@ interface NoteStyle {
 }
 
 const Note = (props: PropTypes) => {
-    const boardId = useSelector((state: State) => state.board.currentBoardId);
-    const note = useSelector((state: State) => state.board.boards[boardId].notes[props.id]);
+    const { zIndex, locks, color, ...note } = useSelector((state: State) => state.board.boards[props.boardId].notes[props.id]);
     const [diffX, setDiffX] = useState(0);
     const [diffY, setDiffY] = useState(0);
-    const [focus, setFocus] = useState(false);
-    const zIndex = useSelector(() => note.zIndex);
-    const color = useSelector(() => note.color);
-    const [style, setStyle] = useState<NoteStyle>({ zIndex, top: props.top || 20, left: props.left || 20 });
-    const locks = useSelector(() => note.locks);
+    const [dragging, setDragging] = useState(false);
+    const [style, setStyle] = useState<NoteStyle>({ zIndex, top: note.top || 20, left: note.left || 20 });
     const [grabDivStyle, setGrabDivStyle] = useState(locks.position ? { cursor: 'default' } : { cursor: 'grab' });
     const dispatch = useDispatch();
     const [showEditorButtons, setShowEditorButtons] = useState(false);
@@ -54,7 +46,7 @@ const Note = (props: PropTypes) => {
     }, [locks.editor]);
 
     useEffect(() => {
-        if (props.noteFocus.inFocus && props.noteFocus.id === note.id) {
+        if (props.noteFocus.inFocus && props.noteFocus.id === props.id) {
             setEditorButtonState();
             setShowNoteMenuToggle(true);
         } else {
@@ -62,7 +54,7 @@ const Note = (props: PropTypes) => {
             setShowNoteMenuToggle(false);
             setShowNoteMenu(false);
         }
-    }, [props.noteFocus, note.id, locks.editor, setEditorButtonState]);
+    }, [props.noteFocus, props.id, locks.editor, setEditorButtonState]);
 
     useEffect(() => {
         if (locks.position) {
@@ -79,18 +71,17 @@ const Note = (props: PropTypes) => {
         setDiffX(e.screenX - e.target.getBoundingClientRect().left);
         setDiffY(e.screenY - e.target.getBoundingClientRect().top);
 
-        props.setDraggingState(true);
-        setFocus(true);
+        setDragging(true);
         setGrabDivStyle({ cursor: 'grabbing' });
         zIndexHandler();
         setStyle({ ...style, width: e.target.getBoundingClientRect().width });
     };
 
     const zIndexHandler = () => {
-        if (zIndex === props.zIndex) return;
-        dispatch({ type: 'UPDATE_NOTE_ZINDEX', noteId: props.id, zIndex: props.zIndex + 1 });
-        dispatch({ type: 'UPDATE_BOARD_ZINDEX', zIndex: props.zIndex + 1 });
-        setStyle({ ...style, zIndex: props.zIndex + 1 });
+        if (zIndex === props.boardZIndex) return;
+        dispatch({ type: 'UPDATE_NOTE_ZINDEX', noteId: props.id, zIndex: props.boardZIndex + 1 });
+        dispatch({ type: 'UPDATE_BOARD_ZINDEX', zIndex: props.boardZIndex + 1 });
+        setStyle({ ...style, zIndex: props.boardZIndex + 1 });
     };
 
     const onDrag = (e: any) => {
@@ -130,19 +121,8 @@ const Note = (props: PropTypes) => {
     };
 
     const setNoteStates = () => {
-        setFocus(false);
-        props.setDraggingState(false);
+        setDragging(false);
         setGrabDivStyle({ cursor: 'grab' });
-    };
-
-    const checkAndUpdateBoardSize = (right: number, bottom: number) => {
-        if (bottom >= props.containerHeight + 80) {
-            dispatch({ type: 'UPDATE_BOARD_SIZE', direction: 'height', size: bottom - 80 });
-        }
-
-        if (right >= props.containerWidth - 20) {
-            dispatch({ type: 'UPDATE_BOARD_SIZE', direction: 'width', size: right + 20 });
-        }
     };
 
     const checkAndUpdateNotePosition = (right: number, bottom: number) => {
@@ -165,7 +145,7 @@ const Note = (props: PropTypes) => {
 
         setNoteStates();
 
-        checkAndUpdateBoardSize(right, bottom);
+        props.checkAndUpdateBoardSize(right, bottom);
         checkAndUpdateNotePosition(right, bottom);
     };
 
@@ -175,7 +155,7 @@ const Note = (props: PropTypes) => {
 
     const clickHandler = (e: SyntheticEvent) => {
         e.stopPropagation();
-        props.setNoteFocus({ id: note.id, inFocus: true });
+        props.setNoteFocus({ id: props.id, inFocus: true });
         if (showNoteMenu) setShowNoteMenu(false);
         zIndexHandler();
     };
@@ -186,9 +166,10 @@ const Note = (props: PropTypes) => {
 
     return (
         <div
+            data-testid={props.id}
             className={[classes.Note, classes[color]].join(' ')}
             style={style}
-            {...(props.dragging && focus && { onMouseMove: onDrag })}
+            {...(dragging && { onMouseMove: onDrag })}
             onMouseUp={dragEnd}
             onClick={clickHandler}
         >
