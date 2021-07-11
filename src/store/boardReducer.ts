@@ -61,16 +61,26 @@ interface ReducerActions extends BoardActions, NoteActions {
     type: string;
 }
 
+const createBaseNote = (id: string, zIndex: number) => {
+    return {
+        id,
+        content: '',
+        left: window.scrollX,
+        top: window.scrollY,
+        right: 0,
+        bottom: 0,
+        zIndex,
+        color: '',
+        locks: { editor: false, position: false, delete: false }
+    };
+};
+
 const createNewNote = (state: State) => {
     const id = v4();
-    const BOARD_PADDING = 20;
-    const BOARD_TOP_PADDING = 20;
     const newZIndex = state.boards[state.currentBoardId].maxZIndex + 1;
     const tempBoardsState = { ...state.boards };
     const notes = tempBoardsState[state.currentBoardId].notes;
-    notes[id] = {
-        id, content: '', left: BOARD_PADDING + window.scrollX, top: BOARD_PADDING + BOARD_TOP_PADDING + window.scrollY, right: 0, bottom: 0, zIndex: newZIndex, color: '', locks: { editor: false, position: false, delete: false }
-    };
+    notes[id] = createBaseNote(id, newZIndex);
 
     return tempBoardsState;
 };

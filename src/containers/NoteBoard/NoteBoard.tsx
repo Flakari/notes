@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import classes from './NoteBoard.module.css';
@@ -20,6 +20,7 @@ const NoteBoard = (props: PropTypes) => {
     const [style, setStyle] = useState<BoardDimensions>({ width: width, height: height });
     const dispatch = useDispatch();
     const [noteFocus, setNoteFocus] = useState({ id: '', inFocus: false });
+    const boardRef = useRef(null);
 
     useEffect(() => {
         const HEADER_HEIGHT = 105;
@@ -43,37 +44,42 @@ const NoteBoard = (props: PropTypes) => {
     };
 
     const checkAndUpdateBoardSize = (right: number, bottom: number) => {
-        if (bottom >= height + 80) {
-            dispatch({ type: 'UPDATE_BOARD_SIZE', direction: 'height', size: bottom - 80 });
+        const PADDING = 20;
+
+        if (bottom >= height) {
+            dispatch({ type: 'UPDATE_BOARD_SIZE', direction: 'height', size: bottom + PADDING });
         }
 
-        if (right >= width - 20) {
-            dispatch({ type: 'UPDATE_BOARD_SIZE', direction: 'width', size: right + 20 });
+        if (right >= width) {
+            dispatch({ type: 'UPDATE_BOARD_SIZE', direction: 'width', size: right + PADDING });
         }
     };
 
     return (
-        <div id={classes.NoteBoard} style={style} onClick={() => setNoteFocus({ id: '', inFocus: false })}>
-            {Object.keys(notes).map(item => {
-                return (
-                    <Note
-                        key={notes[item].id}
-                        id={notes[item].id}
-                        boardId={props.id}
-                        boardZIndex={maxZIndex}
-                        checkAndUpdateBoardSize={checkAndUpdateBoardSize}
-                        noteFocus={noteFocus}
-                        setNoteFocus={setNoteFocus}
-                    />
-                );
-            })}
-            {Object.keys(notes).length === 0 ? (
-                <div id={classes.AddButtonArrowContainer}>
-                    <div id={classes.AddButtonArrowBody}>Add Note</div>
-                    <div id={classes.AddButtonArrow}></div>
-                </div>
-            ) : null}
-            <button id={classes.AddButton} onClick={addNote} aria-label='Add Note'>+</button>
+        <div id={classes.NoteBoardContainer} style={style} onClick={() => setNoteFocus({ id: '', inFocus: false })}>
+            <div ref={boardRef} id={classes.NoteBoard}>
+                {Object.keys(notes).map(item => {
+                    return (
+                        <Note
+                            key={notes[item].id}
+                            id={notes[item].id}
+                            boardId={props.id}
+                            boardZIndex={maxZIndex}
+                            checkAndUpdateBoardSize={checkAndUpdateBoardSize}
+                            noteFocus={noteFocus}
+                            setNoteFocus={setNoteFocus}
+                            boardRef={boardRef}
+                        />
+                    );
+                })}
+                {Object.keys(notes).length === 0 ? (
+                    <div id={classes.AddButtonArrowContainer}>
+                        <div id={classes.AddButtonArrowBody}>Add Note</div>
+                        <div id={classes.AddButtonArrow}></div>
+                    </div>
+                ) : null}
+                <button id={classes.AddButton} onClick={addNote} aria-label='Add Note'>+</button>
+            </div>
         </div>
     );
 };

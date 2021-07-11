@@ -1,4 +1,4 @@
-import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import { SyntheticEvent, useCallback, useEffect, useState, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import EditorContainer from '../../EditorContainer/EditorContainer';
 
@@ -15,6 +15,7 @@ interface PropTypes {
     boardId: string;
     noteFocus: { id: string, inFocus: boolean };
     setNoteFocus: any;
+    boardRef: any;
 }
 
 interface NoteStyle {
@@ -28,8 +29,10 @@ const Note = (props: PropTypes) => {
     const { zIndex, locks, color, ...note } = useSelector((state: State) => state.board.boards[props.boardId].notes[props.id]);
     const [diffX, setDiffX] = useState(0);
     const [diffY, setDiffY] = useState(0);
+    const [noteTop, setNoteTop] = useState(note.top);
+    const [noteLeft, setNoteLeft] = useState(note.left);
     const [dragging, setDragging] = useState(false);
-    const [style, setStyle] = useState<NoteStyle>({ zIndex, top: note.top || 20, left: note.left || 20 });
+    const [style, setStyle] = useState<NoteStyle>({ zIndex, top: note.top || 0, left: note.left || 0 });
     const [grabDivStyle, setGrabDivStyle] = useState(locks.position ? { cursor: 'default' } : { cursor: 'grab' });
     const dispatch = useDispatch();
     const [showEditorButtons, setShowEditorButtons] = useState(false);
@@ -44,6 +47,15 @@ const Note = (props: PropTypes) => {
             setShowEditorButtons(false);
         };
     }, [locks.editor]);
+
+    useLayoutEffect(() => {
+        if (noteTop < 0) setNoteTop(0);
+        if (noteLeft < 0) setNoteLeft(0);
+
+        setStyle(s => {
+            return { ...s, left: noteLeft, top: noteTop }
+        });
+    }, [noteTop, noteLeft])
 
     useEffect(() => {
         if (props.noteFocus.inFocus && props.noteFocus.id === props.id) {
@@ -87,23 +99,18 @@ const Note = (props: PropTypes) => {
     const onDrag = (e: any) => {
         if (locks.position) return;
 
-        const APP_MENU_HEIGHT_MINUS_PADDING = 85;
-        let top = e.screenY - diffY - APP_MENU_HEIGHT_MINUS_PADDING + window.scrollY;
-        let left = e.screenX - diffX + window.scrollX;
-
-        if (top < 40) top = 40;
-        if (left < 20) left = 20;
+        setNoteTop(e.screenY - diffY - props.boardRef.current.offsetTop + window.scrollY);
+        setNoteLeft(e.screenX - diffX - props.boardRef.current.offsetLeft + window.scrollX);
 
         setShowEditorButtons(false);
         setShowNoteMenuToggle(false);
         setShowNoteMenu(false);
-        setStyle({ ...style, left, top });
     };
 
     const setEditorButtonClass = (right: number, top: number) => {
         const classList: string[] = [classes.NoteButtonContainer];
 
-        if (right > ((window.innerWidth * 0.75) + window.scrollX)) {
+        if (right > ((window.innerWidth * 0.85) + window.scrollX)) {
             classList.push(classes.right);
         }
 
@@ -141,7 +148,7 @@ const Note = (props: PropTypes) => {
         let bottom = e.currentTarget.getBoundingClientRect().bottom + window.scrollY;
 
         removeNoteWidth();
-        setEditorButtonClass(right - window.scrollX, style.top);
+        setEditorButtonClass(right, style.top);
 
         setNoteStates();
 
@@ -166,7 +173,6 @@ const Note = (props: PropTypes) => {
 
     return (
         <div
-            data-testid={props.id}
             className={[classes.Note, classes[color]].join(' ')}
             style={style}
             {...(dragging && { onMouseMove: onDrag })}
